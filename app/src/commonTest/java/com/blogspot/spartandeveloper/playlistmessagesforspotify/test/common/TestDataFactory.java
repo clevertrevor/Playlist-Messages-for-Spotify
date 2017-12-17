@@ -1,13 +1,15 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common;
 
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Name;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Profile;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Name;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Profile;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
+import kaaes.spotify.webapi.android.models.Playlist;
 
 /**
  * Factory class that makes instances of data models with random field values.
@@ -46,4 +48,13 @@ public class TestDataFactory {
         return Name.create("Name-" + uniqueSuffix, "Surname-" + uniqueSuffix);
     }
 
+    public static List<Playlist> makePlaylists(int i) {
+        List<Playlist> list = new ArrayList<>();
+        for (; i > 0; i--) {
+            Playlist newPlaylist = new Playlist();
+            newPlaylist.description = Integer.toString(i);
+            list.add(newPlaylist);
+        }
+        return list;
+    }
 }

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
+import kaaes.spotify.webapi.android.models.Playlist;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,6 +45,11 @@ public class MainPresenterTest {
     @After
     public void tearDown() {
         mMainPresenter.detachView();
+    }
+
+    @Test
+    public void loadPlaylistsReturnsPlaylists() {
+        List<Playlist> playlists = TestDataFactory.makePlaylists(10);
     }
 
     @Test

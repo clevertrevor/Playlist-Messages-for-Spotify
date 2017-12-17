@@ -5,6 +5,7 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.Prefe
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.remote.RibotsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
+import kaaes.spotify.webapi.android.models.Playlist;
 
 @Singleton
 public class DataManager {
@@ -47,6 +49,14 @@ public class DataManager {
 
     public Observable<List<Ribot>> getRibots() {
         return mDatabaseHelper.getRibots().distinct();
+    }
+
+    public Observable<List<Playlist>> getPlaylists() {
+        List<Playlist> list = new ArrayList<>();
+        list.add(new Playlist());
+        list.add(new Playlist());
+        list.add(new Playlist());
+        return Observable.just(list);
     }
 
 }

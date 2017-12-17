@@ -6,7 +6,6 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestComponentRule;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
@@ -20,6 +19,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import io.reactivex.Observable;
+import kaaes.spotify.webapi.android.models.Playlist;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -51,25 +51,46 @@ public class MainActivityTest {
     public final TestRule chain = RuleChain.outerRule(component).around(main);
 
     @Test
-    public void listOfRibotsShows() {
-        List<Ribot> testDataRibots = TestDataFactory.makeListRibots(20);
-        when(component.getMockDataManager().getRibots())
-                .thenReturn(Observable.just(testDataRibots));
+    public void listOfPlaylistsShows() {
+
+        List<Playlist> testPlaylists = TestDataFactory.makePlaylists(20);
+        when(component.getMockDataManager().getPlaylists())
+                .thenReturn(Observable.just(testPlaylists));
 
         main.launchActivity(null);
 
         int position = 0;
-        for (Ribot ribot : testDataRibots) {
+        for (Playlist playlist : testPlaylists) {
             onView(withId(R.id.recycler_view))
                     .perform(RecyclerViewActions.scrollToPosition(position));
-            String name = String.format("%s %s", ribot.profile().name().first(),
-                    ribot.profile().name().last());
+            String name = playlist.description;
             onView(withText(name))
-                    .check(matches(isDisplayed()));
-            onView(withText(ribot.profile().email()))
                     .check(matches(isDisplayed()));
             position++;
         }
+
     }
+
+//    @Test
+//    public void listOfRibotsShows() {
+//        List<Ribot> testDataRibots = TestDataFactory.makeListRibots(20);
+//        when(component.getMockDataManager().getRibots())
+//                .thenReturn(Observable.just(testDataRibots));
+//
+//        main.launchActivity(null);
+//
+//        int position = 0;
+//        for (Ribot ribot : testDataRibots) {
+//            onView(withId(R.id.recycler_view))
+//                    .perform(RecyclerViewActions.scrollToPosition(position));
+//            String name = String.format("%s %s", ribot.profile().name().first(),
+//                    ribot.profile().name().last());
+//            onView(withText(name))
+//                    .check(matches(isDisplayed()));
+//            onView(withText(ribot.profile().email()))
+//                    .check(matches(isDisplayed()));
+//            position++;
+//        }
+//    }
 
 }

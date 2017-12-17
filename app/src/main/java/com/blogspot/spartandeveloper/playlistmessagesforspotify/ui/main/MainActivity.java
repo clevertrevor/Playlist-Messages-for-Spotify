@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mRecyclerView.setAdapter(mRibotsAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
-        mMainPresenter.loadRibots();
+        //mMainPresenter.loadRibots();
 
         if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
             startService(SyncService.getStartIntent(this));
@@ -84,6 +84,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             switch(response.getType()) {
             case TOKEN:
                 Timber.i("successful Spotify login");
+                // TODO
                 break;
             case ERROR:
                 Timber.i("failed Spotify login");
