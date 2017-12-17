@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import io.reactivex.Observable;
-import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -53,17 +53,17 @@ public class MainActivityTest {
     @Test
     public void listOfPlaylistsShows() {
 
-        List<Playlist> testPlaylists = TestDataFactory.makePlaylists(20);
-        when(component.getMockDataManager().getPlaylists())
+        List<PlaylistSimple> testPlaylists = TestDataFactory.makePlaylists(20);
+        when(component.getMockDataManager().getPlaylists("test"))
                 .thenReturn(Observable.just(testPlaylists));
 
         main.launchActivity(null);
 
         int position = 0;
-        for (Playlist playlist : testPlaylists) {
+        for (PlaylistSimple playlist : testPlaylists) {
             onView(withId(R.id.recycler_view))
                     .perform(RecyclerViewActions.scrollToPosition(position));
-            String name = playlist.description;
+            String name = playlist.name;
             onView(withText(name))
                     .check(matches(isDisplayed()));
             position++;

@@ -1,10 +1,10 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ConfigPersistent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BasePresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxUtil;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import javax.inject.Inject;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import timber.log.Timber;
 
 @ConfigPersistent
@@ -39,38 +39,70 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void loadRibots() {
+    public void loadPlaylists(final AuthenticationResponse response) {
         checkViewAttached();
         RxUtil.dispose(mDisposable);
-        mDataManager.getRibots()
+        mDataManager.getPlaylists(response.getAccessToken())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<List<Ribot>>() {
+                .subscribe(new Observer<List<PlaylistSimple>>() {
                     @Override
-                    public void onSubscribe(@NonNull Disposable d) {
+                    public void onSubscribe(Disposable d) {
                         mDisposable = d;
                     }
 
                     @Override
-                    public void onNext(@NonNull List<Ribot> ribots) {
-                        if (ribots.isEmpty()) {
-                            getMvpView().showRibotsEmpty();
+                    public void onNext(List<PlaylistSimple> playlists) {
+                        if (playlists.isEmpty()) {
+                            getMvpView().showPlaylistsEmpty();
                         } else {
-                            getMvpView().showRibots(ribots);
+                            getMvpView().showPlaylists(playlists);
                         }
                     }
 
                     @Override
-                    public void onError(@NonNull Throwable e) {
-                        Timber.e(e, "There was an error loading the ribots.");
+                    public void onError(Throwable e) {
+                        Timber.e(e, "There was an error loading the playlists.");
                         getMvpView().showError();
                     }
 
                     @Override
-                    public void onComplete() {
-
-                    }
+                    public void onComplete() {}
                 });
     }
+
+//    public void loadRibots() {
+//        checkViewAttached();
+//        RxUtil.dispose(mDisposable);
+//        mDataManager.getRibots()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Observer<List<Ribot>>() {
+//                    @Override
+//                    public void onSubscribe(@NonNull Disposable d) {
+//                        mDisposable = d;
+//                    }
+//
+//                    @Override
+//                    public void onNext(@NonNull List<Ribot> ribots) {
+//                        if (ribots.isEmpty()) {
+//                            getMvpView().showRibotsEmpty();
+//                        } else {
+//                            getMvpView().showRibots(ribots);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(@NonNull Throwable e) {
+//                        Timber.e(e, "There was an error loading the ribots.");
+//                        getMvpView().showError();
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//    }
 
 }

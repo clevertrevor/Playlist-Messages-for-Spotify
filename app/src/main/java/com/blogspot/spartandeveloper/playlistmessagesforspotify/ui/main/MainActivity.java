@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.SyncService;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -24,6 +23,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
@@ -32,8 +32,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             "com.blogspot.spartandeveloper.playlistcreatorforspotify.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
 
     @Inject MainPresenter mMainPresenter;
-    @Inject
-    RibotsAdapter mRibotsAdapter;
+    @Inject PlaylistAdapter playlistAdapter;
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
@@ -55,10 +54,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mRecyclerView.setAdapter(mRibotsAdapter);
+        mRecyclerView.setAdapter(playlistAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
-        //mMainPresenter.loadRibots();
 
         if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
             startService(SyncService.getStartIntent(this));
@@ -71,7 +69,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         builder.setScopes(scopes);
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginInBrowser(this, request);
-
     }
 
     @Override
@@ -84,7 +81,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             switch(response.getType()) {
             case TOKEN:
                 Timber.i("successful Spotify login");
-                // TODO
+                mMainPresenter.loadPlaylists(response);
                 break;
             case ERROR:
                 Timber.i("failed Spotify login");
@@ -104,11 +101,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     /***** MVP View methods implementation *****/
 
-    @Override
-    public void showRibots(List<Ribot> ribots) {
-        mRibotsAdapter.setRibots(ribots);
-        mRibotsAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void showError() {
@@ -117,10 +109,15 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     @Override
-    public void showRibotsEmpty() {
-        mRibotsAdapter.setRibots(Collections.<Ribot>emptyList());
-        mRibotsAdapter.notifyDataSetChanged();
-        Toast.makeText(this, R.string.empty_ribots, Toast.LENGTH_LONG).show();
+    public void showPlaylists(List<PlaylistSimple> playlists) {
+        playlistAdapter.setPlaylists(playlists);
+
+    }
+
+    @Override
+    public void showPlaylistsEmpty() {
+        playlistAdapter.setPlaylists(Collections.<PlaylistSimple>emptyList());
+        Toast.makeText(this, R.string.empty_playlists, Toast.LENGTH_LONG).show();
     }
 
 }

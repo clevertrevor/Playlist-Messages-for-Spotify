@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 /**
  * Factory class that makes instances of data models with random field values.
@@ -48,11 +48,11 @@ public class TestDataFactory {
         return Name.create("Name-" + uniqueSuffix, "Surname-" + uniqueSuffix);
     }
 
-    public static List<Playlist> makePlaylists(int i) {
-        List<Playlist> list = new ArrayList<>();
+    public static List<PlaylistSimple> makePlaylists(int i) {
+        List<PlaylistSimple> list = new ArrayList<>();
         for (; i > 0; i--) {
-            Playlist newPlaylist = new Playlist();
-            newPlaylist.description = Integer.toString(i);
+            PlaylistSimple newPlaylist = new PlaylistSimple();
+            newPlaylist.name = Integer.toString(i);
             list.add(newPlaylist);
         }
         return list;
