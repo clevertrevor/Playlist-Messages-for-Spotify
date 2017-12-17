@@ -5,6 +5,7 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.Test
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainMvpView;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainPresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxSchedulersOverrideRule;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +31,7 @@ public class MainPresenterTest {
 
     @Mock MainMvpView mMockMainMvpView;
     @Mock DataManager mMockDataManager;
+    @Mock AuthenticationResponse response;
     private MainPresenter mMainPresenter;
 
     @Rule
@@ -71,7 +73,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void loadRibotsFails() {
+    public void loadPlaylistsFails() {
         when(mMockDataManager.getPlaylists(response.getAccessToken()))
                 .thenReturn(Observable.<List<PlaylistSimple>>error(new RuntimeException()));
 
@@ -93,7 +95,7 @@ public class MainPresenterTest {
 //    }
 //
 //    @Test
-//    public void loadRibotsFails() {
+//    public void loadPlaylistsFails() {
 //        when(mMockDataManager.getRibots())
 //                .thenReturn(Observable.<List<Ribot>>error(new RuntimeException()));
 //
