@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
         String REDIRECT_URI = "playlistmessagesforspotify://callback";
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        String[] scopes = new String[]{"streaming"};
+        String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"};
         builder.setScopes(scopes);
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginInBrowser(this, request);
