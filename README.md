@@ -1,6 +1,6 @@
 # Android Boilerplate
 
-Sample Android app that we use at [ribot](http://ribot.co.uk) as a reference for new Android projects. It demonstrates the architecture, tools and guidelines that we use when developing for the Android platform (https://github.com/ribot/android-guidelines)
+Sample Android app that we use at [ribot](http://ribot.com.uk) as a reference for new Android projects. It demonstrates the architecture, tools and guidelines that we use when developing for the Android platform (https://github.com/ribot/android-guidelines)
 
 Libraries and tools included:
 

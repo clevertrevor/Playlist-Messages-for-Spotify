@@ -62,12 +62,12 @@
 -keep class sun.misc.Unsafe { *; }
 # TODO change to match your package model
 # Keep non static or private fields of models so Gson can find their names
--keepclassmembers class uk.co.ribot.androidboilerplate.data.model.** {
+-keepclassmembers class com.blogspot.spartandeveloper.playlistcreatorforspotify.data.model.** {
     !static !private <fields>;
 }
 # TODO change to match your Retrofit services (only if using inner models withing the service)
 # Some models used by gson are inner classes inside the retrofit service
--keepclassmembers class uk.co.ribot.androidboilerplate.data.remote.RibotsService$** {
+-keepclassmembers class com.blogspot.spartandeveloper.playlistcreatorforspotify.data.remote.RibotsService$** {
     !static !private <fields>;
 }
 
