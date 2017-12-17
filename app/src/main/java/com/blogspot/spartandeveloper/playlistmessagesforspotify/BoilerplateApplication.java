@@ -4,11 +4,10 @@ import android.app.Application;
 import android.content.Context;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.component.ApplicationComponent;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.component.DaggerApplicationComponent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.module.ApplicationModule;
 import com.crashlytics.android.Crashlytics;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BuildConfig;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.component.DaggerApplicationComponent;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 

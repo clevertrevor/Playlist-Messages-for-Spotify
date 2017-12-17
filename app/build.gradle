@@ -102,6 +102,8 @@ dependencies {
     def mockito = "org.mockito:mockito-core:$MOCKITO_VERSION"
 
     // App Dependencies
+    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
+    compile 'com.spotify.android:auth:1.0.0-alpha'
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
@@ -169,4 +171,9 @@ dependencies {
 // Log out test results to console
 tasks.matching {it instanceof Test}.all {
     testLogging.events = ["failed", "passed", "skipped"]
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://jitpack.io" }
 }

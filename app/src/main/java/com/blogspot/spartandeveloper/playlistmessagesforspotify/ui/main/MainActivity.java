@@ -2,6 +2,7 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,9 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.SyncService
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +24,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -57,6 +62,35 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
         if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
             startService(SyncService.getStartIntent(this));
+        }
+
+        String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
+        String REDIRECT_URI = "playlistmessagesforspotify://callback";
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        String[] scopes = new String[]{"streaming"};
+        builder.setScopes(scopes);
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginInBrowser(this, request);
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Uri spotifyUri = intent.getData();
+
+        if (spotifyUri != null) {
+            AuthenticationResponse response = AuthenticationResponse.fromUri(spotifyUri);
+            switch(response.getType()) {
+            case TOKEN:
+                Timber.i("successful Spotify login");
+                break;
+            case ERROR:
+                Timber.i("failed Spotify login");
+                break;
+            default:
+                Timber.i("user probably cancelled Spotify login");
+            }
         }
     }
 
