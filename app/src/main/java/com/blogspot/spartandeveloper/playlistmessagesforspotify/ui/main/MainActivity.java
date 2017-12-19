@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.SyncService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -34,7 +33,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     @Inject MainPresenter mMainPresenter;
     @Inject PlaylistAdapter playlistAdapter;
 
-    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.rv_playlists) RecyclerView mRecyclerView;
 
     /**
      * Return an Intent to start this Activity.
@@ -58,17 +57,20 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
 
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            startService(SyncService.getStartIntent(this));
-        }
+//        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+//            startService(SyncService.getStartIntent(this));
+//        }
 
-        String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
-        String REDIRECT_URI = "playlistmessagesforspotify://callback";
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"};
-        builder.setScopes(scopes);
-        AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginInBrowser(this, request);
+        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+            Timber.d("EXTRA_TRIGGER_SYNC_FLAG true");
+            String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
+            String REDIRECT_URI = "playlistmessagesforspotify://callback";
+            AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+            String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"};
+            builder.setScopes(scopes);
+            AuthenticationRequest request = builder.build();
+            AuthenticationClient.openLoginInBrowser(this, request);
+        }
     }
 
     @Override
