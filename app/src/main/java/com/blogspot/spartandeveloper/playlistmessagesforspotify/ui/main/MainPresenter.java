@@ -42,7 +42,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     public void loadPlaylists(final AuthenticationResponse response) {
         checkViewAttached();
         RxUtil.dispose(mDisposable);
-        mDataManager.getPlaylists(response.getAccessToken())
+        String accessToken = (response == null) ? "" : response.getAccessToken();
+        if (accessToken == null) {
+            Timber.d("invalid auth response or test code");
+            accessToken = "";
+        }
+        mDataManager.getPlaylists(accessToken)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<PlaylistSimple>>() {

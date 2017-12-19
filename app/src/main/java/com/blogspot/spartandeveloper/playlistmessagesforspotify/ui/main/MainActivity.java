@@ -70,6 +70,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             builder.setScopes(scopes);
             AuthenticationRequest request = builder.build();
             AuthenticationClient.openLoginInBrowser(this, request);
+        } else {
+            // test code
+            mMainPresenter.loadPlaylists(null);
         }
     }
 
