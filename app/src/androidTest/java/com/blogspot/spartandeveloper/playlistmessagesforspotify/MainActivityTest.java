@@ -3,6 +3,8 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -22,7 +24,10 @@ import io.reactivex.Observable;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -45,10 +50,29 @@ public class MainActivityTest {
                 }
             };
 
+    // allows mocking of intents
+    @Rule
+    public IntentsTestRule<MainActivity> intentsTestRule =
+            new IntentsTestRule<>(MainActivity.class);
+
     // TestComponentRule needs to go first to make sure the Dagger ApplicationTestComponent is set
     // in the Application before any Activity is launched.
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
+
+    @Test
+    public void clickPlaylistOpensSpotifyIntent() {
+        List<PlaylistSimple> list = TestDataFactory.makeActualPlaylist();
+        when(component.getMockDataManager().getPlaylists(""))
+                .thenReturn(Observable.just(list));
+
+        main.launchActivity(null);
+
+
+        onView(ViewMatchers.withId(R.id.rv_playlists))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        intended(toPackage("com.spotify.music"));
+    }
 
     @Test
     public void emptyListOfPlaylistsShows() {

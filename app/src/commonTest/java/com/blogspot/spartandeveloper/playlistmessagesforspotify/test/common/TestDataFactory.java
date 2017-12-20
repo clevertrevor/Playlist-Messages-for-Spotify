@@ -57,4 +57,19 @@ public class TestDataFactory {
         }
         return list;
     }
+
+    // returns 1 playlist with all info except for tracks
+    public static List<PlaylistSimple> makeActualPlaylist() {
+
+        PlaylistSimple playlist = new PlaylistSimple();
+        playlist.id = "7aKvz8nVEMeugOfME0bjui";
+        playlist.href = "https://api.spotify.com/v1/users/1243473592/playlists/7aKvz8nVEMeugOfME0bjui";
+        playlist.name = "Aluna! ";
+        playlist.uri = "spotify:user:1243473592:playlist:7aKvz8nVEMeugOfME0bjui";
+
+        List<PlaylistSimple> list = new ArrayList<>();
+        list.add(playlist);
+        return list;
+
+    }
 }
