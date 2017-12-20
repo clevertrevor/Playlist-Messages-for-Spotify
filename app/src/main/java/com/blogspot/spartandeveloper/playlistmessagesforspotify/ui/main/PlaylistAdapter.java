@@ -3,6 +3,7 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -21,10 +22,19 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
 
     private List<PlaylistSimple> playlists;
+    private OnPlaylistItemClicked listener;
+
+    interface OnPlaylistItemClicked {
+        void onPlaylistItemClicked(String uri);
+    }
 
     @Inject
     public PlaylistAdapter() {
         playlists = new ArrayList<>();
+    }
+
+    public void setListener(OnPlaylistItemClicked listener) {
+        this.listener = listener;
     }
 
     public void setPlaylists(List<PlaylistSimple> playlists) {
@@ -41,10 +51,16 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
 
     @Override
     public void onBindViewHolder(final PlaylistViewHolder holder, int position) {
-        PlaylistSimple item = playlists.get(position);
-        //holder.hexColorView.setBackgroundColor(android.R.color.darker_gray);
+        final PlaylistSimple item = playlists.get(position);
         holder.nameTextView.setText(item.name);
-//        holder.emailTextView.setText(ribot.profile().email());
+        holder.itemView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onPlaylistItemClicked(item.uri);
+                }
+            }
+        });
     }
 
     @Override

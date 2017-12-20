@@ -10,7 +10,9 @@ import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity implements MainMvpView {
+public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylistItemClicked {
 
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.blogspot.spartandeveloper.playlistcreatorforspotify.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
@@ -53,6 +55,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        playlistAdapter.setListener(this);
         mRecyclerView.setAdapter(playlistAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
@@ -116,7 +119,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     @Override
     public void showPlaylists(List<PlaylistSimple> playlists) {
         playlistAdapter.setPlaylists(playlists);
-
     }
 
     @Override
@@ -125,4 +127,13 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         Toast.makeText(this, R.string.empty_playlists, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onPlaylistItemClicked(String uri) {
+        if (Util.isSpotifyInstalled(this)) {
+            Intent launcher = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            startActivity(launcher);
+        } else {
+            Toast.makeText(this, getString(R.string.toast_spotify_not_installed), Toast.LENGTH_SHORT).show();
+        }
+    }
 }
