@@ -72,6 +72,7 @@ public class MainActivityTest {
         onView(ViewMatchers.withId(R.id.rv_playlists))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         intended(toPackage("com.spotify.music"));
+        //https://developer.android.com/training/testing/espresso/intents.html
     }
 
     @Test
