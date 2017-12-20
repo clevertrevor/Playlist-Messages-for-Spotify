@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.PlaylistViewHolder;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,14 +47,22 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
     @Override
     public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_ribot, parent, false);
+                .inflate(R.layout.item_playlist, parent, false);
         return new PlaylistViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final PlaylistViewHolder holder, int position) {
         final PlaylistSimple item = playlists.get(position);
+
         holder.nameTextView.setText(item.name);
+
+        if (item.images.size() >= 1) {
+            Glide.with(holder.itemView.getContext())
+                    .load(item.images.get(0).url)
+                    .into(holder.playlistArtworkIv);
+        }
+
         holder.itemView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,10 +80,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
 
     static class PlaylistViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.view_hex_color)
-        View hexColorView;
-        @BindView(R.id.text_name)
-        TextView nameTextView;
+        @BindView(R.id.iv_playlist_artwork) ImageView playlistArtworkIv;
+        @BindView(R.id.text_name) TextView nameTextView;
         @BindView(R.id.text_email) TextView emailTextView;
 
         PlaylistViewHolder(View itemView) {
