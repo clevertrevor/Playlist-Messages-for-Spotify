@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray"
-    tools:context=".ui.main.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="@color/gray"
+                tools:context=".ui.main.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_playlists"
@@ -14,5 +15,15 @@
         android:paddingBottom="6dp"
         android:paddingTop="6dp"
         android:scrollbars="vertical" />
+
+    <com.scalified.fab.ActionButton
+        android:id="@+id/action_button"
+        app:type="BIG"
+        app:image="@drawable/ic_playlist_add_white_36dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        />
 
 </RelativeLayout>
