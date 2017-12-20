@@ -55,7 +55,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
     public void onBindViewHolder(final PlaylistViewHolder holder, int position) {
         final PlaylistSimple item = playlists.get(position);
 
-        holder.nameTextView.setText(item.name);
+        holder.playlistNameTv.setText(item.name);
+        holder.authorTv.setText(item.owner.display_name);
+        String trackStr = item.tracks.total + "  " + holder.itemView.getContext().getString(R.string.songs);
+        holder.trackTotalTv.setText(trackStr);
 
         if (item.images.size() >= 1) {
             Glide.with(holder.itemView.getContext())
@@ -81,8 +84,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
     static class PlaylistViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.iv_playlist_artwork) ImageView playlistArtworkIv;
-        @BindView(R.id.text_name) TextView nameTextView;
-        @BindView(R.id.text_email) TextView emailTextView;
+        @BindView(R.id.tv_playlist_name) TextView playlistNameTv;
+        @BindView(R.id.tv_total_tracks) TextView trackTotalTv;
+        @BindView(R.id.tv_playlist_author) TextView authorTv;
 
         PlaylistViewHolder(View itemView) {
             super(itemView);

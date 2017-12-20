@@ -20,25 +20,36 @@
             android:id="@+id/iv_playlist_artwork"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            tools:background="@android:color/background_dark"/>
 
         <TextView
-            android:id="@+id/text_name"
+            android:id="@+id/tv_playlist_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/iv_playlist_artwork"
             android:textSize="@dimen/text_body"
-            tools:text="Antony Ribot" />
+            tools:text="Awesome playlist" />
 
         <TextView
-            android:id="@+id/text_email"
+            android:id="@+id/tv_playlist_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/text_name"
-            android:layout_marginTop="5dp"
             android:layout_toRightOf="@id/iv_playlist_artwork"
-            android:textSize="@dimen/text_small_body"
-            tools:text="developer" />
+            android:layout_below="@id/tv_playlist_name"
+            android:textSize="@dimen/text_body"
+            tools:text="Swaggy P" />
+
+        <TextView
+            android:id="@+id/tv_total_tracks"
+            android:layout_below="@id/tv_playlist_name"
+            android:layout_toRightOf="@id/tv_playlist_author"
+            android:layout_marginLeft="20dp"
+            android:textSize="@dimen/text_body"
+            tools:text="42 songs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
     </RelativeLayout>
 
