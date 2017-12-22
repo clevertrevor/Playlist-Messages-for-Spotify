@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -12,10 +11,9 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestComponentRule;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -65,22 +63,11 @@ public class MainActivityTest {
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
 
-    @Before
-    public void setup() {
-        Intents.init();
-    }
-
-    @After
-    public void cleanup() {
-        Intents.release();
-    }
-
     @Test
     public void clickFabOpensCreatePlaylist() {
         onView(ViewMatchers.withId(R.id.fab_create_playlist))
                 .perform(ViewActions.click());
         intended(hasComponent(CreatePlaylistActivity.class.getName()));
-
     }
 
     @Test

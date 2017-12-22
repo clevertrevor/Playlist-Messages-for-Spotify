@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
@@ -24,6 +25,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import timber.log.Timber;
 
@@ -105,6 +107,12 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         super.onDestroy();
 
         mMainPresenter.detachView();
+    }
+
+    @OnClick(R.id.fab_create_playlist)
+    void startCreatePlaylistActivity() {
+        Intent intent = new Intent(this, CreatePlaylistActivity.class);
+        startActivity(intent);
     }
 
     /***** MVP View methods implementation *****/
