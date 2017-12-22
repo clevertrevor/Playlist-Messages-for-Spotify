@@ -2,7 +2,9 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -12,6 +14,8 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.Test
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -27,6 +31,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -59,6 +64,24 @@ public class MainActivityTest {
     // in the Application before any Activity is launched.
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
+
+    @Before
+    public void setup() {
+        Intents.init();
+    }
+
+    @After
+    public void cleanup() {
+        Intents.release();
+    }
+
+    @Test
+    public void clickFabOpensCreatePlaylist() {
+        onView(ViewMatchers.withId(R.id.fab_create_playlist))
+                .perform(ViewActions.click());
+        intended(hasComponent(CreatePlaylistActivity.class.getName()));
+
+    }
 
     @Test
     public void clickPlaylistOpensSpotifyIntent() {
