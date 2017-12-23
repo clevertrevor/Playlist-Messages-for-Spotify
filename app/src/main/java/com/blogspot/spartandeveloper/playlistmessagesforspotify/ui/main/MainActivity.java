@@ -8,9 +8,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
@@ -109,10 +110,15 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         mMainPresenter.detachView();
     }
 
-    @OnClick(R.id.fab_create_playlist)
-    void startCreatePlaylistActivity() {
-        Intent intent = new Intent(this, CreatePlaylistActivity.class);
-        startActivity(intent);
+    @OnClick(R.id.fab_create_playlist_dialog)
+    void openCreatePlaylistDialog() {
+        new MaterialDialog.Builder(this)
+                .title(getString(R.string.enter_pl_info))
+                .theme(Theme.DARK)
+                .customView(R.layout.dialog_create_playlist, false)
+                .positiveText(android.R.string.yes)
+                .negativeText(android.R.string.cancel)
+                .show();
     }
 
     /***** MVP View methods implementation *****/

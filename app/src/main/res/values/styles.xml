@@ -6,4 +6,16 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
+    <style name="PlaylistTextInputEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PlaylistTextInputLayout">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>

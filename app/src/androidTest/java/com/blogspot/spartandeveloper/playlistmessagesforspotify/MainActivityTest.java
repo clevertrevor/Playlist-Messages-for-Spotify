@@ -11,7 +11,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestComponentRule;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
 
 import org.junit.Rule;
@@ -29,7 +28,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -64,10 +62,10 @@ public class MainActivityTest {
     public final TestRule chain = RuleChain.outerRule(component).around(main);
 
     @Test
-    public void clickFabOpensCreatePlaylist() {
-        onView(ViewMatchers.withId(R.id.fab_create_playlist))
+    public void clickFabOpensCreatePlaylistDialog() {
+        onView(ViewMatchers.withId(R.id.fab_create_playlist_dialog))
                 .perform(ViewActions.click());
-        intended(hasComponent(CreatePlaylistActivity.class.getName()));
+        onView(withText(main.getActivity().getString(R.string.enter_pl_info))).check(matches(isDisplayed()));
     }
 
     @Test

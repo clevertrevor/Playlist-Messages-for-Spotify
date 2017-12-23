@@ -106,9 +106,11 @@ dependencies {
     compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
     compile 'com.spotify.android:auth:1.0.0-alpha'
     compile 'com.scalified:fab:1.1.3'
-    compile 'com.github.apl-devs:appintro:v4.2.2'
+    compile 'com.afollestad.material-dialogs:core:0.9.4.0'
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:cardview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
