@@ -13,6 +13,7 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.Test
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -29,6 +30,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -51,6 +53,13 @@ public class MainActivityTest {
                 }
             };
 
+    private MainActivity mainActivity;
+
+    @Before
+    public void setup() {
+        mainActivity = main.getActivity();
+    }
+
     // allows mocking of intents
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule =
@@ -60,6 +69,17 @@ public class MainActivityTest {
     // in the Application before any Activity is launched.
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
+
+    @Test
+    public void whenEmptyPlaylistInfoEntered_thenShowErrorMessage() {
+        onView(ViewMatchers.withId(R.id.fab_create_playlist_dialog))
+                .perform(ViewActions.click());
+        onView(withText(android.R.string.ok)).perform(ViewActions.click());
+
+        onView(withId(R.id.layout_playlist_message))
+                .check(matches(hasErrorText(mainActivity.getString(R.string.enter_message))));
+
+    }
 
     @Test
     public void clickFabOpensCreatePlaylistDialog() {
