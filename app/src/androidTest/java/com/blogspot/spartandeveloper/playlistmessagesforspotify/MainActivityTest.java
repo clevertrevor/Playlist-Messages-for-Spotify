@@ -65,7 +65,7 @@ public class MainActivityTest {
     public void clickFabOpensCreatePlaylistDialog() {
         onView(ViewMatchers.withId(R.id.fab_create_playlist_dialog))
                 .perform(ViewActions.click());
-        onView(withText(main.getActivity().getString(R.string.enter_pl_info))).check(matches(isDisplayed()));
+        onView(withText(R.string.enter_pl_info)).check(matches(isDisplayed()));
     }
 
     @Test
