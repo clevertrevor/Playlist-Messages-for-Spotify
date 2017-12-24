@@ -12,4 +12,7 @@ public interface MainMvpView extends MvpView {
     void showPlaylists(List<PlaylistSimple> playlists);
     void showPlaylistsEmpty();
 
+    void showCreatePlaylistNameAndMessageError();
+    void showCreatePlaylistMessageError();
+    void showCreatePlaylistNameError();
 }

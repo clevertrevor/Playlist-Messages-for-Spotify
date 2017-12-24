@@ -13,4 +13,5 @@
     <string name="toast_spotify_not_installed">Spotify is not installed</string>
     <string name="songs">songs</string>
     <string name="enter_pl_info">Enter Playlist Info</string>
+    <string name="enter_message">Enter a message</string>
 </resources>

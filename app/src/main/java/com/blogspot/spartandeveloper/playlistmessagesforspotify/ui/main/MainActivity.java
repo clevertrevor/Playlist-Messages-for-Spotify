@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.afollestad.materialdialogs.Theme;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
@@ -39,6 +44,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @Inject PlaylistAdapter playlistAdapter;
 
     @BindView(R.id.rv_playlists) RecyclerView mRecyclerView;
+
+    private MaterialDialog createPlaylistDialog;
 
     /**
      * Return an Intent to start this Activity.
@@ -112,13 +119,29 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
     @OnClick(R.id.fab_create_playlist_dialog)
     void openCreatePlaylistDialog() {
-        new MaterialDialog.Builder(this)
+        createPlaylistDialog = new MaterialDialog.Builder(this)
                 .title(getString(R.string.enter_pl_info))
                 .theme(Theme.DARK)
                 .customView(R.layout.dialog_create_playlist, false)
-                .positiveText(android.R.string.yes)
+                .onPositive(getPositiveCallback())
+                .positiveText(android.R.string.ok)
                 .negativeText(android.R.string.cancel)
                 .show();
+    }
+
+    private SingleButtonCallback getPositiveCallback() {
+        return new SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                TextInputEditText playlistNameEt = ButterKnife.findById(dialog, R.id.et_playlist_name);
+                TextInputEditText playlistMessageEt = ButterKnife.findById(dialog, R.id.et_playlist_message);
+
+                String name = playlistNameEt.getText().toString();
+                String message = playlistMessageEt.getText().toString();
+
+                mMainPresenter.createPlaylist(name, message);
+            }
+        };
     }
 
     /***** MVP View methods implementation *****/
@@ -139,6 +162,24 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     public void showPlaylistsEmpty() {
         playlistAdapter.setPlaylists(Collections.<PlaylistSimple>emptyList());
         Toast.makeText(this, R.string.empty_playlists, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showCreatePlaylistNameAndMessageError() {
+        showCreatePlaylistNameError();
+        showCreatePlaylistMessageError();
+    }
+
+    @Override
+    public void showCreatePlaylistMessageError() {
+        TextInputLayout layout = ButterKnife.findById(createPlaylistDialog, R.id.layout_playlist_message);
+        layout.setError("Enter a message");
+    }
+
+    @Override
+    public void showCreatePlaylistNameError() {
+        TextInputLayout layout = ButterKnife.findById(createPlaylistDialog, R.id.layout_playlist_name);
+        layout.setError("Enter a playlist name");
     }
 
     @Override

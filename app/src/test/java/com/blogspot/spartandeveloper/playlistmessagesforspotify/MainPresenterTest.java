@@ -22,7 +22,6 @@ import java.util.List;
 import io.reactivex.Observable;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,9 +51,9 @@ public class MainPresenterTest {
     @Test
     public void whenEmptyPlaylistInfo_thenShowPlaylistError() {
 
-        mMainPresenter.createPlaylist("","");
+        mMainPresenter.createPlaylist(null, null);
 
-        verify(mMockMainMvpView).showPlaylistError();
+        verify(mMockMainMvpView).showCreatePlaylistNameAndMessageError();
         verify(mMockMainMvpView, never()).showPlaylists(null);
         verify(mMockMainMvpView, never()).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showError();

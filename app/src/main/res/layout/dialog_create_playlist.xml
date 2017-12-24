@@ -7,15 +7,19 @@
     android:padding="8dp">
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_playlist_name"
         style="@style/PlaylistTextInputLayout">
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_playlist_name"
             android:hint="Playlist Name..."
             style="@style/PlaylistTextInputEditText"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/layout_playlist_message"
         style="@style/PlaylistTextInputLayout">
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_playlist_message"
             android:hint="Message..."
             style="@style/PlaylistTextInputEditText"/>
     </android.support.design.widget.TextInputLayout>

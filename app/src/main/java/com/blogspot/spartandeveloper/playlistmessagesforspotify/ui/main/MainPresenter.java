@@ -76,6 +76,19 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 });
     }
 
+    public void createPlaylist(String playlistName, String playlistMessage) {
+        if (playlistMessage == null && playlistName == null) {
+            getMvpView().showCreatePlaylistNameAndMessageError();
+        }
+//        if (TextUtils.isEmpty(playlistName) && TextUtils.isEmpty(playlistMessage)) {
+//            getMvpView().showCreatePlaylistNameAndMessageError();
+//        } else if (TextUtils.isEmpty(playlistName)) {
+//            getMvpView().showCreatePlaylistNameError();
+//        } else if (TextUtils.isEmpty(playlistMessage)) {
+//            getMvpView().showCreatePlaylistMessageError();
+//        }
+    }
+
 //    public void loadRibots() {
 //        checkViewAttached();
 //        RxUtil.dispose(mDisposable);
