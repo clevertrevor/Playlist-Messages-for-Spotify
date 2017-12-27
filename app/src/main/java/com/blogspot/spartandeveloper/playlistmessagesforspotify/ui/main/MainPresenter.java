@@ -87,6 +87,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 //        } else if (TextUtils.isEmpty(playlistMessage)) {
 //            getMvpView().showCreatePlaylistMessageError();
 //        }
+
+        getMvpView().startCreatePlaylistService(playlistName, playlistMessage);
     }
 
 //    public void loadRibots() {

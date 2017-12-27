@@ -36,6 +36,10 @@
 
         <service android:name=".data.SyncService"/>
 
+        <service
+            android:name=".ui.createplaylist.CreatePlaylistService"
+            android:exported="false"/>
+
         <receiver
             android:name=".data.SyncService$SyncOnConnectionAvailable"
             android:enabled="false">

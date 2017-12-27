@@ -15,8 +15,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.afollestad.materialdialogs.Theme;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
@@ -32,7 +35,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
+import kaaes.spotify.webapi.android.models.UserPrivate;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylistItemClicked {
@@ -42,6 +47,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
     @Inject MainPresenter mMainPresenter;
     @Inject PlaylistAdapter playlistAdapter;
+    @Inject PreferencesHelper prefs;
 
     @BindView(R.id.rv_playlists) RecyclerView mRecyclerView;
 
@@ -99,6 +105,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             switch(response.getType()) {
             case TOKEN:
                 Timber.i("successful Spotify login");
+                ((BoilerplateApplication)getApplicationContext()).initSpotifyService(response.getAccessToken());
+                setUserDetails();
                 mMainPresenter.loadPlaylists(response);
                 break;
             case ERROR:
@@ -109,6 +117,12 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             }
         }
     }
+
+    private void setUserDetails() {
+        SpotifyService spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
+        UserPrivate user = spotify.getMe();
+        prefs.setSpotifyUserId(user.id);
+    } 
 
     @Override
     protected void onDestroy() {
@@ -180,6 +194,15 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     public void showCreatePlaylistNameError() {
         TextInputLayout layout = ButterKnife.findById(createPlaylistDialog, R.id.layout_playlist_name);
         layout.setError("Enter a playlist name");
+    }
+
+    @Override
+    public void startCreatePlaylistService(String playlistName, String playlistMessage) {
+        Intent intent = new Intent(this, CreatePlaylistService.class);
+        intent.putExtra(CreatePlaylistService.PLAYLIST_NAME, playlistName);
+        intent.putExtra(CreatePlaylistService.PLAYLIST_MESSAGE, playlistMessage);
+        intent.putExtra(CreatePlaylistService.USER_ID, prefs.getSpotifyUserId());
+        startService(intent);
     }
 
     @Override

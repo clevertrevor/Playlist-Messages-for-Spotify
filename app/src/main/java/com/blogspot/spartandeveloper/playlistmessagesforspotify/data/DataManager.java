@@ -35,6 +35,8 @@ public class DataManager {
         return mPreferencesHelper;
     }
 
+
+
     public Observable<Ribot> syncRibots() {
         return mRibotsService.getRibots()
                 .concatMap(new Function<List<Ribot>, ObservableSource<? extends Ribot>>() {
@@ -44,10 +46,6 @@ public class DataManager {
                         return mDatabaseHelper.setRibots(ribots);
                     }
                 });
-    }
-
-    public Observable<List<Ribot>> getRibots() {
-        return mDatabaseHelper.getRibots().distinct();
     }
 
     public Observable<List<PlaylistSimple>> getPlaylists(final String accessToken) {

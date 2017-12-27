@@ -9,11 +9,16 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.module
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
 import timber.log.Timber;
 
 public class BoilerplateApplication extends Application  {
 
     ApplicationComponent mApplicationComponent;
+    private SpotifyService spotifyService;
 
     @Override
     public void onCreate() {
@@ -23,6 +28,28 @@ public class BoilerplateApplication extends Application  {
             Timber.plant(new Timber.DebugTree());
             Fabric.with(this, new Crashlytics());
         }
+    }
+
+    public void initSpotifyService(final String accessToken) {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", "Bearer " + accessToken);
+                    }
+                })
+                .build();
+
+        spotifyService = restAdapter.create(SpotifyService.class);
+    }
+
+    public SpotifyService getSpotifyService() {
+        if (spotifyService == null) {
+            Timber.e("Spotify service not initialized");
+            return null;
+        }
+        return spotifyService;
     }
 
     public static BoilerplateApplication get(Context context) {
