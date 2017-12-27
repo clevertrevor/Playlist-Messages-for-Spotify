@@ -29,12 +29,18 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.UserPrivate;
@@ -85,7 +91,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
             String REDIRECT_URI = "playlistmessagesforspotify://callback";
             AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-            String[] scopes = new String[]{"playlist-read-private", "playlist-read-collaborative"};
+            String[] scopes = new String[]{"playlist-read-private", "playlist-modify-private", "playlist-read-collaborative"};
             builder.setScopes(scopes);
             AuthenticationRequest request = builder.build();
             AuthenticationClient.openLoginInBrowser(this, request);
@@ -119,10 +125,50 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     private void setUserDetails() {
-        SpotifyService spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
-        UserPrivate user = spotify.getMe();
-        prefs.setSpotifyUserId(user.id);
-    } 
+        final SpotifyService spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
+        Observable<Void> userPrivateObservable = Observable.fromCallable(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                UserPrivate userPrivate = spotify.getMe();
+                prefs.setSpotifyUserId(userPrivate.id);
+                return null;
+            };
+        });
+
+        userPrivateObservable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Void>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+
+
+
+
+
+
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -198,6 +244,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
     @Override
     public void startCreatePlaylistService(String playlistName, String playlistMessage) {
+        Timber.i("startCreatePlaylistService");
         Intent intent = new Intent(this, CreatePlaylistService.class);
         intent.putExtra(CreatePlaylistService.PLAYLIST_NAME, playlistName);
         intent.putExtra(CreatePlaylistService.PLAYLIST_MESSAGE, playlistMessage);

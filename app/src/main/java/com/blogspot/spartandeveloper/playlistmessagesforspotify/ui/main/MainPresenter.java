@@ -77,6 +77,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     public void createPlaylist(String playlistName, String playlistMessage) {
+        Timber.d("createPlaylist: %s, %s", playlistName, playlistMessage);
         if (playlistMessage == null && playlistName == null) {
             getMvpView().showCreatePlaylistNameAndMessageError();
         }

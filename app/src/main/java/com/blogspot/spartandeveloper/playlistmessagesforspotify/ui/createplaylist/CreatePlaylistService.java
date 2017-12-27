@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
@@ -30,14 +32,19 @@ public class CreatePlaylistService extends IntentService {
     private SpotifyService spotify;
     private String userId;
 
+    public CreatePlaylistService() {
+        super("CreatePlaylistService");
+    }
+
     public CreatePlaylistService(String name) {
         super(name);
-        spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
+        Timber.d("created CreatePlaylistService");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Timber.d("received new playlist intent");
+        spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
         playlistName = intent.getStringExtra(PLAYLIST_NAME);
         userId = intent.getStringExtra(USER_ID);
         String message = intent.getStringExtra(PLAYLIST_MESSAGE);
@@ -46,6 +53,10 @@ public class CreatePlaylistService extends IntentService {
         String[] split = message.split(" ");
         totalTracks = split.length;
         tracks = new ArrayList<>(totalTracks);
+
+        for (int i = 0; i < totalTracks; i++) {
+            tracks.add(null);
+        }
 
         for (int i = 0; i < totalTracks; i++) {
             String curr = split[i];
@@ -77,14 +88,35 @@ public class CreatePlaylistService extends IntentService {
         options.put("name", playlistName);
         spotify.createPlaylist(userId, options, new Callback<Playlist>() {
             @Override
-            public void success(Playlist playlist, Response response) {
+            public void success(final Playlist playlist, Response response) {
                 Timber.i("created playlist: %s", playlist.name);
 
-                spotify.addTracksToPlaylist()
+                final Map<String, Object> addTrackBody = new HashMap<>();
+                String[] uris = new String[tracks.size()];
+                for (int i = 0; i < tracks.size(); i++) {
+                    uris[i] = tracks.get(i).uri;
+                }
+                addTrackBody.put("uris", uris);
+
+                spotify.addTracksToPlaylist(userId, playlist.id, null, addTrackBody,
+                        new Callback<Pager<PlaylistTrack>>() {
+                            @Override
+                            public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
+                                Timber.d("added tracks to playlist: %s", playlist.name);
+                                Timber.d("response: %s", response.getReason());
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Timber.e("unable to add tracks to playlist");
+                                Timber.e(error);
+                            }
+                        });
             }
 
             @Override
             public void failure(RetrofitError error) {
+                Timber.e("unable to create playlist");
                 Timber.e(error);
             }
         });
