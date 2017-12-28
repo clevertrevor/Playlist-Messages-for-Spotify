@@ -29,6 +29,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -69,6 +70,21 @@ public class MainActivityTest {
     // in the Application before any Activity is launched.
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
+
+    @Test
+    public void whenPrivacyPolicyClicked_thenOpenBrowser() {
+
+        // open options menu
+        onView(ViewMatchers.withId(R.id.menu_options))
+                .perform(ViewActions.click());
+
+        // click privacy policy
+        onView(ViewMatchers.withText(mainActivity.getString(R.string.item_privacy_policy)))
+                .perform(ViewActions.click());
+
+        intended(hasAction(Intent.ACTION_VIEW));
+
+    }
 
     @Test
     public void whenEmptyPlaylistInfoEntered_thenShowErrorMessage() {
