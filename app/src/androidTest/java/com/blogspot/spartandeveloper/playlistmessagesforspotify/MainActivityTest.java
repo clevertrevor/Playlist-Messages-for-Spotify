@@ -26,6 +26,7 @@ import io.reactivex.Observable;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -74,14 +75,8 @@ public class MainActivityTest {
     @Test
     public void whenPrivacyPolicyClicked_thenOpenBrowser() {
 
-        // open options menu
-        onView(ViewMatchers.withId(R.id.menu_options))
-                .perform(ViewActions.click());
-
-        // click privacy policy
-        onView(ViewMatchers.withText(mainActivity.getString(R.string.item_privacy_policy)))
-                .perform(ViewActions.click());
-
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
+        onView(ViewMatchers.withText(R.string.privacy_policy)).perform(ViewActions.click());
         intended(hasAction(Intent.ACTION_VIEW));
 
     }

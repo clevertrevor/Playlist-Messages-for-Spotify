@@ -9,6 +9,9 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -202,6 +205,31 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                 mMainPresenter.createPlaylist(name, message);
             }
         };
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+        case R.id.action_privacy_policy:{
+            openPrivacyPolicy();
+            return true;
+        }
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openPrivacyPolicy() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("http://www.google.com/"));
+        startActivity(intent);
     }
 
     /***** MVP View methods implementation *****/
