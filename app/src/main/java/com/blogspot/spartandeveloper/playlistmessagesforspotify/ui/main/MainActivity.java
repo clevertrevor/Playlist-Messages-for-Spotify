@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.MaterialDialog.Builder;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.afollestad.materialdialogs.Theme;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
@@ -227,9 +229,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     private void openPrivacyPolicy() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("http://www.google.com/"));
-        startActivity(intent);
+        MaterialDialog.Builder builder = new Builder(this)
+                .content(getString(R.string.privacy_policy_description))
+                .positiveText(getString(android.R.string.ok))
+                .positiveColor(ContextCompat.getColor(this, android.R.color.black));
+        builder.show();
     }
 
     /***** MVP View methods implementation *****/

@@ -30,7 +30,6 @@ import static android.support.test.espresso.Espresso.openActionBarOverflowOrOpti
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -74,11 +73,9 @@ public class MainActivityTest {
 
     @Test
     public void whenPrivacyPolicyClicked_thenOpenBrowser() {
-
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(ViewMatchers.withText(R.string.privacy_policy)).perform(ViewActions.click());
-        intended(hasAction(Intent.ACTION_VIEW));
-
+        onView(withText(R.string.privacy_policy_description)).check(matches(isDisplayed()));
     }
 
     @Test
