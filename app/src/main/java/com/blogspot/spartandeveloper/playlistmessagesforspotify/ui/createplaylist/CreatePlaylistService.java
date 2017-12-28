@@ -58,25 +58,53 @@ public class CreatePlaylistService extends IntentService {
             tracks.add(null);
         }
 
+        // loop over all tracks
         for (int i = 0; i < totalTracks; i++) {
             String curr = split[i];
 
-            final int finalI = i;
-            spotify.searchTracks(curr, new Callback<TracksPager>() {
-                @Override
-                public void success(TracksPager tracksPager, Response response) {
-                    tracks.set(finalI, tracksPager.tracks.items.get(0));
-                    runningTrackCount++;
-                    checkAndHandleCompletion();
+            // search all offsets - easy and FIXME wastes searches
+            for (int offset = 0; offset < 251; offset += 50) {
+                searchTrack(curr, i, offset);
+            }
+
+        }
+    }
+
+    private void searchTrack(final String curr, final int i, final int offset) {
+        Map<String, Object> options = new HashMap<>();
+        options.put("limit", 50);
+        options.put("offset", offset);
+        Timber.d("searchTracks. curr:%s, offset:%s, i:%s", curr, offset, i);
+
+        spotify.searchTracks(curr, options, new Callback<TracksPager>() {
+            @Override
+            public void success(TracksPager tracksPager, Response response) {
+
+                if (tracks.get(i) != null) {
+                    Timber.d("already found track for index :%s", i);
+                    return;
                 }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    runningTrackCount++;
-                    checkAndHandleCompletion();
+                for (Track track : tracksPager.tracks.items) {
+                    String trackName = track.name;
+                    if (trackName.equalsIgnoreCase(curr)) {
+                        Timber.i("found word: %s", trackName);
+                        tracks.set(i, track);
+                        runningTrackCount++;
+                        checkAndHandleCompletion();
+                        break;
+                    }
                 }
-            });
-        }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Timber.e("retrofit error finding track");
+                Timber.e(error);
+            }
+        });
+
 
     }
 
