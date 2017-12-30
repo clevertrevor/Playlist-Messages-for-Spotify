@@ -20,7 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.Builder;
 import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.afollestad.materialdialogs.Theme;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             switch(response.getType()) {
             case TOKEN:
                 Timber.i("successful Spotify login");
-                ((BoilerplateApplication)getApplicationContext()).initSpotifyService(response.getAccessToken());
+                ((MyApp)getApplicationContext()).initSpotifyService(response.getAccessToken());
                 setUserDetails();
                 mMainPresenter.loadPlaylists(response);
                 break;
@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     private void setUserDetails() {
-        final SpotifyService spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
+        final SpotifyService spotify = ((MyApp)getApplicationContext()).getSpotifyService();
         Observable<Void> userPrivateObservable = Observable.fromCallable(new Callable<Void>() {
             @Override
             public Void call() throws Exception {

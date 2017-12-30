@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class CreatePlaylistService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Timber.d("received new playlist intent");
-        spotify = ((BoilerplateApplication)getApplicationContext()).getSpotifyService();
+        spotify = ((MyApp)getApplicationContext()).getSpotifyService();
         playlistName = intent.getStringExtra(PLAYLIST_NAME);
         userId = intent.getStringExtra(USER_ID);
         String message = intent.getStringExtra(PLAYLIST_MESSAGE);

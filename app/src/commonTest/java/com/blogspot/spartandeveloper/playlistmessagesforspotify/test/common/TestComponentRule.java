@@ -6,7 +6,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.injection.component.DaggerTestComponent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.injection.component.TestComponent;
@@ -26,7 +26,7 @@ public class TestComponentRule implements TestRule {
 
     public TestComponentRule(Context context) {
         mContext = context;
-        BoilerplateApplication application = BoilerplateApplication.get(context);
+        MyApp application = MyApp.get(context);
         mTestComponent = DaggerTestComponent.builder()
                 .applicationTestModule(new ApplicationTestModule(application))
                 .build();
@@ -45,7 +45,7 @@ public class TestComponentRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                BoilerplateApplication application = BoilerplateApplication.get(mContext);
+                MyApp application = MyApp.get(mContext);
                 application.setComponent(mTestComponent);
                 base.evaluate();
                 application.setComponent(null);

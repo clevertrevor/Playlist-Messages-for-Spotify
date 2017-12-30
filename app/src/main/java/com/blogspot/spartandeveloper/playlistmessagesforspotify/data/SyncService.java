@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.AndroidComponentUtil;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.NetworkUtil;
@@ -38,7 +38,7 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        BoilerplateApplication.get(this).getComponent().inject(this);
+        MyApp.get(this).getComponent().inject(this);
     }
 
     @Override

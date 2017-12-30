@@ -15,7 +15,7 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import timber.log.Timber;
 
-public class BoilerplateApplication extends Application  {
+public class MyApp extends Application  {
 
     ApplicationComponent mApplicationComponent;
     private SpotifyService spotifyService;
@@ -52,8 +52,8 @@ public class BoilerplateApplication extends Application  {
         return spotifyService;
     }
 
-    public static BoilerplateApplication get(Context context) {
-        return (BoilerplateApplication) context.getApplicationContext();
+    public static MyApp get(Context context) {
+        return (MyApp) context.getApplicationContext();
     }
 
     public ApplicationComponent getComponent() {

@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 @Singleton
 public class PreferencesHelper {
 
-    public static final String PREF_FILE_NAME = "android_boilerplate_pref_file";
+    public static final String PREF_FILE_NAME = "file_pref_helper";
 
     private final SharedPreferences mPref;
     private final Editor editor;

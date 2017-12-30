@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.BoilerplateApplication;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.component.ActivityComponent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.component.ConfigPersistentComponent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.module.ActivityModule;
@@ -43,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
         if (configPersistentComponent == null) {
             Timber.i("Creating new ConfigPersistentComponent id=%d", mActivityId);
             configPersistentComponent = DaggerConfigPersistentComponent.builder()
-                    .applicationComponent(BoilerplateApplication.get(this).getComponent())
+                    .applicationComponent(MyApp.get(this).getComponent())
                     .build();
             sComponentsMap.put(mActivityId, configPersistentComponent);
         }
