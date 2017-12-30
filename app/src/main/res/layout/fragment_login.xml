@@ -1,13 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.login.LoginFragment">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.login.LoginFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:src="@drawable/ic_lock_outline"
+        android:layout_width="250dp"
+        android:layout_height="250dp"/>
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"/>
+        android:layout_marginTop="40dp"
+        android:textSize="26sp"
+        android:gravity="center"
+        android:textColor="@color/primary_dark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/you_must_login"/>
 
-</FrameLayout>
+    <com.rey.material.widget.Button
+        style="@style/Material.Drawable.Ripple.Wave"
+        android:layout_marginTop="40dp"
+        android:layout_width="220dp"
+        android:layout_height="70dp"
+        android:textSize="20sp"
+        android:background="@color/primary"
+        android:textColor="@color/fab_material_white"
+        android:text="@string/btn_login_to_spotify"
+        app:rd_enable="true"/>
+
+</LinearLayout>

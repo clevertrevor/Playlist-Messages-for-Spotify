@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -25,22 +29,22 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist.CreatePlaylistService;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.login.LoginFragment;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.scalified.fab.ActionButton;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -61,8 +65,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @Inject PreferencesHelper prefs;
 
     @BindView(R.id.rv_playlists) RecyclerView mRecyclerView;
+    @BindView(R.id.fab_create_playlist_dialog) ActionButton fab;
 
     private MaterialDialog createPlaylistDialog;
+    private int expireTime;
 
     /**
      * Return an Intent to start this Activity.
@@ -87,23 +93,38 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
 
+        fab.setOnClickListener(getFabOnClickListener());
+
 //        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
 //            startService(SyncService.getStartIntent(this));
 //        }
 
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            Timber.d("EXTRA_TRIGGER_SYNC_FLAG true");
-            String CLIENT_ID = "76edc333f1f74a99878e80d5b2874372";
-            String REDIRECT_URI = "playlistmessagesforspotify://callback";
-            AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-            String[] scopes = new String[]{"playlist-read-private", "playlist-modify-public", "playlist-modify-private", "playlist-read-collaborative"};
-            builder.setScopes(scopes);
-            AuthenticationRequest request = builder.build();
-            AuthenticationClient.openLoginInBrowser(this, request);
+        if (prefs.getExpireTime() < TimeUnit.MINUTES.toSeconds(3)) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            LoginFragment loginFragment = LoginFragment.newInstance();
+            fragmentTransaction.add(R.id.fragment_container, loginFragment);
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, 0);
+            fragmentTransaction.show(loginFragment);
+            fragmentTransaction.commit();
+            fab.hide();
+
+//            // user must login
+//            Timber.d("user must login");
+//            String CLIENT_ID = getString(R.string.spotify_client_id);
+//            String REDIRECT_URI = "playlistmessagesforspotify://callback";
+//            AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(
+//                    CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+//            String[] scopes = new String[]{"playlist-read-private", "playlist-modify-public",
+//                    "playlist-modify-private", "playlist-read-collaborative"};
+//            builder.setScopes(scopes);
+//            AuthenticationRequest request = builder.build();
+//            AuthenticationClient.openLoginInBrowser(this, request);
         } else {
-            // test code
             mMainPresenter.loadPlaylists(null);
         }
+
     }
 
     @Override
@@ -111,13 +132,14 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         super.onNewIntent(intent);
         Uri spotifyUri = intent.getData();
 
-        if (spotifyUri != null) {
+        if(spotifyUri != null) {
             AuthenticationResponse response = AuthenticationResponse.fromUri(spotifyUri);
             switch(response.getType()) {
             case TOKEN:
                 Timber.i("successful Spotify login");
-                ((MyApp)getApplicationContext()).initSpotifyService(response.getAccessToken());
+                ((MyApp) getApplicationContext()).initSpotifyService(response.getAccessToken());
                 setUserDetails();
+                setExpireTime(response.getExpiresIn());
                 mMainPresenter.loadPlaylists(response);
                 break;
             case ERROR:
@@ -165,14 +187,6 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                     }
                 });
 
-
-
-
-
-
-
-
-
     }
 
     @Override
@@ -182,16 +196,20 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         mMainPresenter.detachView();
     }
 
-    @OnClick(R.id.fab_create_playlist_dialog)
-    void openCreatePlaylistDialog() {
-        createPlaylistDialog = new MaterialDialog.Builder(this)
-                .title(getString(R.string.enter_pl_info))
-                .theme(Theme.DARK)
-                .customView(R.layout.dialog_create_playlist, false)
-                .onPositive(getPositiveCallback())
-                .positiveText(android.R.string.ok)
-                .negativeText(android.R.string.cancel)
-                .show();
+    private OnClickListener getFabOnClickListener() {
+        return new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPlaylistDialog = new MaterialDialog.Builder(MainActivity.this)
+                        .title(getString(R.string.enter_pl_info))
+                        .theme(Theme.DARK)
+                        .customView(R.layout.dialog_create_playlist, false)
+                        .onPositive(getPositiveCallback())
+                        .positiveText(android.R.string.ok)
+                        .negativeText(android.R.string.cancel)
+                        .show();
+            }
+        };
     }
 
     private SingleButtonCallback getPositiveCallback() {
@@ -292,5 +310,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         } else {
             Toast.makeText(this, getString(R.string.toast_spotify_not_installed), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setExpireTime(int remainingSeconds) {
+        long expireTime = (System.currentTimeMillis() / 1000) + remainingSeconds;
+        prefs.setExpireTime(expireTime);
     }
 }

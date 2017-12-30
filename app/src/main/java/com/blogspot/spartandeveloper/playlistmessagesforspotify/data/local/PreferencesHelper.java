@@ -18,7 +18,8 @@ public class PreferencesHelper {
     private final Editor editor;
 
     private final static String
-        SPOTIFY_USER_ID = "spotify_user_id";
+            SPOTIFY_USER_ID = "spotify_user_id",
+            SPOTIFY_TOKEN_EXPIRE_TIME = "spotify_token_expire_time";
 
     @Inject
     public PreferencesHelper(@ApplicationContext Context context) {
@@ -36,6 +37,14 @@ public class PreferencesHelper {
 
     public void clear() {
         mPref.edit().clear().apply();
+    }
+
+    public void setExpireTime(long expireTime) {
+        editor.putLong(SPOTIFY_TOKEN_EXPIRE_TIME, expireTime).apply();
+    }
+
+    public long getExpireTime() {
+        return mPref.getLong(SPOTIFY_TOKEN_EXPIRE_TIME, -1);
     }
 
 }

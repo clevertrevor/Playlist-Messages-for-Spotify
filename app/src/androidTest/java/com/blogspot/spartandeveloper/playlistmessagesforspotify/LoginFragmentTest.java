@@ -18,6 +18,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.AdditionalMatchers.not;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -48,7 +50,7 @@ public class LoginFragmentTest {
 
 
         onView(withText(R.string.login_failed))
-                .inRoot(withDecorView(not(is(activity.getWindow().getDecorView()))))
+                .inRoot(withDecorView(not(is(fragmentTestRule.getFragment().getActivity().getWindow().getDecorView()))))
                 .check(matches(isDisplayed()));
 
     }
