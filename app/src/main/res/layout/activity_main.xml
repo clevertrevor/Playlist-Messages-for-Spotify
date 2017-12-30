@@ -19,6 +19,7 @@
     <com.scalified.fab.ActionButton
         android:id="@+id/fab_create_playlist_dialog"
         app:type="BIG"
+        app:button_color="@color/primary"
         app:image="@drawable/ic_playlist_add_white_36dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
