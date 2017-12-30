@@ -16,4 +16,7 @@
     <string name="enter_pl_info">Enter Playlist Info</string>
     <string name="enter_message">Enter a message</string>
     <string name="privacy_policy">Privacy Policy</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

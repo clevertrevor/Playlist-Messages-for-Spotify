@@ -96,6 +96,7 @@ dependencies {
     final BUTTERKNIFE_VERSION = '8.4.0'
     final AUTO_VALUE_VERSION = '1.5'
     final AUTO_VALUE_GSON_VERSION = '0.6.0'
+    final FRAGMENT_TEST_RULE_VERSION = '1.1.0'
 
     def daggerCompiler = "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
     def jUnit = "junit:junit:4.12"
@@ -108,12 +109,17 @@ dependencies {
     compile 'com.scalified:fab:1.1.3'
     compile 'com.afollestad.material-dialogs:core:0.9.4.0'
     compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
+    implementation "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:cardview-v7:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
+
+    androidTestImplementation "com.21buttons:fragment-test-rule:$FRAGMENT_TEST_RULE_VERSION"
+    debugImplementation "com.21buttons:fragment-test-rule-extras:$FRAGMENT_TEST_RULE_VERSION"
+
 
     compile("com.squareup.sqlbrite2:sqlbrite:2.0.0") {
         exclude group: 'com.android.support', module: 'support-annotations'
