@@ -97,6 +97,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
 
         long threeMinutesFromNow = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(3);
+        Timber.d("should login Spotify: %S", prefs.getExpireTimeSeconds() < threeMinutesFromNow);
         if (prefs.getExpireTimeSeconds() < threeMinutesFromNow) {
             // user must login - open login fragment
             Timber.d("user must login");
@@ -131,6 +132,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             case TOKEN:
                 Timber.i("successful Spotify login");
                 ((MyApp) getApplicationContext()).initSpotifyService(response.getAccessToken());
+                fab.show();
                 setUserDetails();
                 prefs.setSpotifyAccessToken(response.getAccessToken());
                 setExpireTime(response.getExpiresIn());
