@@ -1,10 +1,10 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ConfigPersistent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BasePresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxUtil;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.List;
 
@@ -22,10 +22,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     private final DataManager mDataManager;
     private Disposable mDisposable;
+    private PreferencesHelper prefs;
 
     @Inject
-    public MainPresenter(DataManager dataManager) {
+    public MainPresenter(DataManager dataManager, PreferencesHelper preferencesHelper) {
         mDataManager = dataManager;
+        this.prefs = preferencesHelper;
     }
 
     @Override
@@ -41,15 +43,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
 
 
-    public void loadPlaylists(final AuthenticationResponse response) {
+    public void loadPlaylists() {
         checkViewAttached();
         RxUtil.dispose(mDisposable);
-        String accessToken = (response == null) ? "" : response.getAccessToken();
-        if (accessToken == null) {
-            Timber.d("invalid auth response or test code");
-            accessToken = "";
-        }
-        mDataManager.getPlaylists(accessToken)
+        mDataManager.getPlaylists()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<List<PlaylistSimple>>() {
@@ -69,7 +66,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "There was an error loading the playlists.");
+                        Timber.e( "There was an error loading the playlists.");
+                        Timber.e(e);
                         getMvpView().showError();
                     }
 

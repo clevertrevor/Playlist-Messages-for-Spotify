@@ -48,7 +48,8 @@ public class DataManager {
                 });
     }
 
-    public Observable<List<PlaylistSimple>> getPlaylists(final String accessToken) {
+    public Observable<List<PlaylistSimple>> getPlaylists() {
+        String accessToken = mPreferencesHelper.getSpotifyAccessToken();
         return mDatabaseHelper.getPlaylists(accessToken);
     }
 

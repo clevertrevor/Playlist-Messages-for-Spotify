@@ -19,7 +19,8 @@ public class PreferencesHelper {
 
     private final static String
             SPOTIFY_USER_ID = "spotify_user_id",
-            SPOTIFY_TOKEN_EXPIRE_TIME = "spotify_token_expire_time";
+            SPOTIFY_TOKEN_EXPIRE_TIME = "spotify_token_expire_time",
+            SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
 
     @Inject
     public PreferencesHelper(@ApplicationContext Context context) {
@@ -46,5 +47,15 @@ public class PreferencesHelper {
     public long getExpireTimeSeconds() {
         return mPref.getLong(SPOTIFY_TOKEN_EXPIRE_TIME, -1);
     }
+
+    public void setSpotifyAccessToken(String accessToken) {
+        editor.putString(SPOTIFY_ACCESS_TOKEN, accessToken).apply();
+    }
+
+    public String getSpotifyAccessToken() {
+        return mPref.getString(SPOTIFY_ACCESS_TOKEN, "");
+    }
+
+
 
 }

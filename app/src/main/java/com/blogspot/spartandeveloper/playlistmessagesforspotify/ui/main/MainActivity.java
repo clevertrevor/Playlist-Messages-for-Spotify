@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
             fab.hide();
 
         } else {
-            mMainPresenter.loadPlaylists(null);
+            mMainPresenter.loadPlaylists();
         }
 
     }
@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         LoginFragment loginFragment = LoginFragment.newInstance();
-        fragmentTransaction.add(R.id.fragment_container, loginFragment);
+        fragmentTransaction.add(R.id.fragment_container, loginFragment, LoginFragment.TAG);
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, 0);
         fragmentTransaction.show(loginFragment);
         fragmentTransaction.commit();
@@ -132,8 +132,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                 Timber.i("successful Spotify login");
                 ((MyApp) getApplicationContext()).initSpotifyService(response.getAccessToken());
                 setUserDetails();
+                prefs.setSpotifyAccessToken(response.getAccessToken());
                 setExpireTime(response.getExpiresIn());
-                mMainPresenter.loadPlaylists(response);
+                mMainPresenter.loadPlaylists();
+                hideLoginFragment();
                 break;
             case ERROR:
                 Timber.i("failed Spotify login");
@@ -142,6 +144,14 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                 Timber.i("user probably cancelled Spotify login");
             }
         }
+    }
+
+    private void hideLoginFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginFragment.TAG);
+        fragmentTransaction.hide(loginFragment);
+        fragmentTransaction.commit();
     }
 
     private void setUserDetails() {
@@ -251,7 +261,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
     @Override
     public void showError() {
-        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_ribots))
+        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_playlists))
                 .show();
     }
 
