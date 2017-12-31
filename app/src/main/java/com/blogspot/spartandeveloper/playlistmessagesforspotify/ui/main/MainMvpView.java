@@ -11,6 +11,7 @@ public interface MainMvpView extends MvpView {
     void showError();
     void showPlaylists(List<PlaylistSimple> playlists);
     void showPlaylistsEmpty();
+    void showLoginFragment();
 
     void showCreatePlaylistNameAndMessageError();
     void showCreatePlaylistMessageError();

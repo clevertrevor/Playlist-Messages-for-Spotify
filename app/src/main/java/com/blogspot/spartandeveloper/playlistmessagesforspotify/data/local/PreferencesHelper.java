@@ -43,7 +43,7 @@ public class PreferencesHelper {
         editor.putLong(SPOTIFY_TOKEN_EXPIRE_TIME, expireTime).apply();
     }
 
-    public long getExpireTime() {
+    public long getExpireTimeSeconds() {
         return mPref.getLong(SPOTIFY_TOKEN_EXPIRE_TIME, -1);
     }
 

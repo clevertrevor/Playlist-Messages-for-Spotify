@@ -39,6 +39,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
+
+
     public void loadPlaylists(final AuthenticationResponse response) {
         checkViewAttached();
         RxUtil.dispose(mDisposable);

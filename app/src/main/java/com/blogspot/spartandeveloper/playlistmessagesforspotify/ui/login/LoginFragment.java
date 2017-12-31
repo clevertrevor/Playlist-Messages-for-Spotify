@@ -10,6 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,6 +103,19 @@ public class LoginFragment extends Fragment implements LoginMvpView {
     @Override
     public void showSignInFailure() {
         Toast.makeText(getActivity(), getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.btn_spotify_login)
+    void onSpotifyLoginButtonClicked() {
+        String CLIENT_ID = getString(R.string.spotify_client_id);
+        String REDIRECT_URI = "playlistmessagesforspotify://callback";
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(
+                CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        String[] scopes = new String[]{"playlist-read-private", "playlist-modify-public",
+                "playlist-modify-private", "playlist-read-collaborative"};
+        builder.setScopes(scopes);
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginInBrowser(getActivity(), request);
     }
 
     /**

@@ -95,36 +95,29 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
         fab.setOnClickListener(getFabOnClickListener());
 
-//        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-//            startService(SyncService.getStartIntent(this));
-//        }
 
-        if (prefs.getExpireTime() < TimeUnit.MINUTES.toSeconds(3)) {
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            LoginFragment loginFragment = LoginFragment.newInstance();
-            fragmentTransaction.add(R.id.fragment_container, loginFragment);
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, 0);
-            fragmentTransaction.show(loginFragment);
-            fragmentTransaction.commit();
+        long threeMinutesFromNow = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(3);
+        if (prefs.getExpireTimeSeconds() < threeMinutesFromNow) {
+            // user must login - open login fragment
+            Timber.d("user must login");
+            showLoginFragment();
             fab.hide();
 
-//            // user must login
-//            Timber.d("user must login");
-//            String CLIENT_ID = getString(R.string.spotify_client_id);
-//            String REDIRECT_URI = "playlistmessagesforspotify://callback";
-//            AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(
-//                    CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-//            String[] scopes = new String[]{"playlist-read-private", "playlist-modify-public",
-//                    "playlist-modify-private", "playlist-read-collaborative"};
-//            builder.setScopes(scopes);
-//            AuthenticationRequest request = builder.build();
-//            AuthenticationClient.openLoginInBrowser(this, request);
         } else {
             mMainPresenter.loadPlaylists(null);
         }
 
+    }
+
+    @Override
+    public void showLoginFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        LoginFragment loginFragment = LoginFragment.newInstance();
+        fragmentTransaction.add(R.id.fragment_container, loginFragment);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, 0);
+        fragmentTransaction.show(loginFragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -192,7 +185,6 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         mMainPresenter.detachView();
     }
 

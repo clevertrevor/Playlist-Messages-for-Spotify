@@ -9,6 +9,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestComponentRule;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainActivity;
@@ -21,6 +22,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
@@ -35,6 +37,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.core.IsNot.not;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -70,6 +74,25 @@ public class MainActivityTest {
     // in the Application before any Activity is launched.
     @Rule
     public final TestRule chain = RuleChain.outerRule(component).around(main);
+
+    @Test
+    public void whenLoginExpired_thenOpenLoginFragment() {
+        PreferencesHelper prefs = mock(PreferencesHelper.class);
+        when(prefs.getExpireTimeSeconds())
+                .thenReturn(-1L);
+        onView(withText(R.string.btn_login_to_spotify))
+                .check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void whenLoginValid_thenLoadPlaylists() {
+        PreferencesHelper prefs = mock(PreferencesHelper.class);
+        long future = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(8);
+        when(prefs.getExpireTimeSeconds())
+                .thenReturn(future);
+        onView(withText(R.string.btn_login_to_spotify))
+                .check(matches(not(isDisplayed())));
+    }
 
     @Test
     public void whenPrivacyPolicyClicked_thenOpenBrowser() {
@@ -145,27 +168,5 @@ public class MainActivityTest {
         }
 
     }
-
-//    @Test
-//    public void listOfRibotsShows() {
-//        List<Ribot> testDataRibots = TestDataFactory.makeListRibots(20);
-//        when(component.getMockDataManager().getRibots())
-//                .thenReturn(Observable.just(testDataRibots));
-//
-//        main.launchActivity(null);
-//
-//        int position = 0;
-//        for (Ribot ribot : testDataRibots) {
-//            onView(withId(R.id.recycler_view))
-//                    .perform(RecyclerViewActions.scrollToPosition(position));
-//            String name = String.format("%s %s", ribot.profile().name().first(),
-//                    ribot.profile().name().last());
-//            onView(withText(name))
-//                    .check(matches(isDisplayed()));
-//            onView(withText(ribot.profile().email()))
-//                    .check(matches(isDisplayed()));
-//            position++;
-//        }
-//    }
 
 }
