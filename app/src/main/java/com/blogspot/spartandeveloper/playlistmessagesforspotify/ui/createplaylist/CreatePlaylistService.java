@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +135,7 @@ public class CreatePlaylistService extends IntentService {
                             public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
                                 Timber.d("added tracks to playlist: %s", playlist.name);
                                 Timber.d("response: %s", response.getReason());
+                                EventBus.getDefault().post(new LoadPlaylistsEvent());
                             }
 
                             @Override

@@ -103,6 +103,7 @@ dependencies {
     def mockito = "org.mockito:mockito-core:$MOCKITO_VERSION"
 
     // App Dependencies
+    compile 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
     compile 'com.spotify.android:auth:1.0.0-alpha'

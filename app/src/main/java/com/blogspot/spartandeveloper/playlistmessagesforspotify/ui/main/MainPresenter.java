@@ -5,6 +5,11 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.Prefe
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ConfigPersistent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BasePresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxUtil;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -33,12 +38,14 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     @Override
     public void attachView(MainMvpView mvpView) {
         super.attachView(mvpView);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void detachView() {
         super.detachView();
         if (mDisposable != null) mDisposable.dispose();
+        EventBus.getDefault().unregister(this);
     }
 
     public void loadPlaylists() {
@@ -86,5 +93,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         getMvpView().dismissCreatePlaylistDialog();
         getMvpView().startCreatePlaylistService(playlistName, playlistMessage);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(LoadPlaylistsEvent event) {
+        loadPlaylists();
+    }
+
 
 }
