@@ -53,7 +53,6 @@ public class MainPresenterTest {
 
         mMainPresenter.createPlaylist(null, null);
 
-        verify(mMockMainMvpView).showCreatePlaylistNameAndMessageError();
         verify(mMockMainMvpView, never()).showPlaylists(null);
         verify(mMockMainMvpView, never()).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showError();

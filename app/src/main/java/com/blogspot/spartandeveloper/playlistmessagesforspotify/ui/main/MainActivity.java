@@ -209,9 +209,20 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                         .theme(Theme.DARK)
                         .customView(R.layout.dialog_create_playlist, false)
                         .onPositive(getPositiveCallback())
+                        .onNegative(getNegativeCallback())
                         .positiveText(android.R.string.ok)
                         .negativeText(android.R.string.cancel)
+                        .autoDismiss(false)
                         .show();
+            }
+        };
+    }
+
+    private SingleButtonCallback getNegativeCallback() {
+        return new SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                dialog.dismiss();
             }
         };
     }
@@ -279,21 +290,15 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     @Override
-    public void showCreatePlaylistNameAndMessageError() {
-        showCreatePlaylistNameError();
-        showCreatePlaylistMessageError();
-    }
-
-    @Override
     public void showCreatePlaylistMessageError() {
         TextInputLayout layout = ButterKnife.findById(createPlaylistDialog, R.id.layout_playlist_message);
-        layout.setError("Enter a message");
+        layout.setError(getString(R.string.error_enter_a_message));
     }
 
     @Override
     public void showCreatePlaylistNameError() {
         TextInputLayout layout = ButterKnife.findById(createPlaylistDialog, R.id.layout_playlist_name);
-        layout.setError("Enter a playlist name");
+        layout.setError(getString(R.string.error_enter_a_playlist_name));
     }
 
     @Override
@@ -304,6 +309,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         intent.putExtra(CreatePlaylistService.PLAYLIST_MESSAGE, playlistMessage);
         intent.putExtra(CreatePlaylistService.USER_ID, prefs.getSpotifyUserId());
         startService(intent);
+    }
+
+    @Override
+    public void dismissCreatePlaylistDialog() {
+        createPlaylistDialog.dismiss();
     }
 
     @Override

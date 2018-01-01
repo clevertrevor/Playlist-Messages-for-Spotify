@@ -122,11 +122,8 @@ public class MainActivityTest {
     @Test
     public void clickPlaylistOpensSpotifyIntent() {
         List<PlaylistSimple> list = TestDataFactory.makeActualPlaylist();
-        when(component.getMockDataManager().getPlaylists(""))
+        when(component.getMockDataManager().getPlaylists())
                 .thenReturn(Observable.just(list));
-
-        main.launchActivity(null);
-
 
         onView(ViewMatchers.withId(R.id.rv_playlists))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -138,23 +135,19 @@ public class MainActivityTest {
     public void emptyListOfPlaylistsShows() {
 
         List<PlaylistSimple> testPlaylists = TestDataFactory.makePlaylists(0);
-        when(component.getMockDataManager().getPlaylists(""))
+        when(component.getMockDataManager().getPlaylists())
                 .thenReturn(Observable.just(testPlaylists));
 
-        main.launchActivity(null);
-
+        // FIXME does not assert anything of importance
         onView(withId(R.id.rv_playlists)).check(matches(isDisplayed()));
-
     }
 
     @Test
     public void retrievedListOfPlaylistsShows() {
 
         List<PlaylistSimple> testPlaylists = TestDataFactory.makePlaylists(5);
-        when(component.getMockDataManager().getPlaylists(""))
+        when(component.getMockDataManager().getPlaylists())
                 .thenReturn(Observable.just(testPlaylists));
-
-        main.launchActivity(null);
 
         onView(withId(R.id.rv_playlists)).check(matches(isDisplayed()));
 

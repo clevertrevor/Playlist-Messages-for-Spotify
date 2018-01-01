@@ -13,9 +13,10 @@ public interface MainMvpView extends MvpView {
     void showPlaylistsEmpty();
     void showLoginFragment();
 
-    void showCreatePlaylistNameAndMessageError();
     void showCreatePlaylistMessageError();
     void showCreatePlaylistNameError();
 
     void startCreatePlaylistService(String playlistName, String playlistMessage);
+
+    void dismissCreatePlaylistDialog();
 }

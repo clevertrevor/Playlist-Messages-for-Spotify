@@ -20,4 +20,6 @@
     <string name="spotify_client_id">76edc333f1f74a99878e80d5b2874372</string>
     <string name="you_must_login">You must login to Spotify\nto create and view playlists</string>
     <string name="btn_login_to_spotify">Login to Spotify</string>
+    <string name="error_enter_a_message">Enter a message</string>
+    <string name="error_enter_a_playlist_name">Enter a playlist name</string>
 </resources>
