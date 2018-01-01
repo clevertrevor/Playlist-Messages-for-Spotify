@@ -88,6 +88,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        String accessToken = prefs.getSpotifyAccessToken();
+        ((MyApp) getApplicationContext()).initSpotifyService(accessToken);
+
         playlistAdapter.setListener(this);
         mRecyclerView.setAdapter(playlistAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
