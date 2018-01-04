@@ -26,15 +26,21 @@ import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
 import com.afollestad.materialdialogs.Theme;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.CreatePlaylistService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BaseActivity;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.CreatePlaylistService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.login.LoginFragment;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.PlaylistAdapter.OnPlaylistItemClicked;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.DialogFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.Util;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistErrorEvent;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistSuccessEvent;
 import com.scalified.fab.ActionButton;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,6 +93,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         activityComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
 
         String accessToken = prefs.getSpotifyAccessToken();
         ((MyApp) getApplicationContext()).initSpotifyService(accessToken);
@@ -201,6 +208,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     protected void onDestroy() {
         super.onDestroy();
         mMainPresenter.detachView();
+        EventBus.getDefault().unregister(this);
     }
 
     private OnClickListener getFabOnClickListener() {
@@ -333,4 +341,18 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         long expireTime = (System.currentTimeMillis() / 1000) + remainingSeconds;
         prefs.setExpireTime(expireTime);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CreatePlaylistSuccessEvent event) {
+        String text = getString(R.string.successfully_created_playlist) + " \"" + event.playlistName + "\"";
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CreatePlaylistErrorEvent event) {
+        String text = getString(R.string.failed_to_find) + " \"" + event.word + "\"";
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+
 }

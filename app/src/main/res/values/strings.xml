@@ -22,4 +22,6 @@
     <string name="btn_login_to_spotify">Login to Spotify</string>
     <string name="error_enter_a_message">Enter a message</string>
     <string name="error_enter_a_playlist_name">Enter a playlist name</string>
+    <string name="failed_to_find">Failed to find</string>
+    <string name="successfully_created_playlist">Successfully created playlist</string>
 </resources>

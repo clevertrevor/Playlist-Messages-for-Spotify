@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistErrorEvent;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistSuccessEvent;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,27 +80,23 @@ public class CreatePlaylistService extends IntentService {
             @Override
             public void success(TracksPager tracksPager, Response response) {
 
-                if (tracks.get(index) != null) {
-                    Timber.e("SHOULD NOT REACH HERE. already found track for index :%s", index);
-                    return;
-                }
-
-                boolean found = false;
                 for (Track track : tracksPager.tracks.items) {
                     String trackName = track.name;
                     if (trackName.equalsIgnoreCase(curr)) {
                         Timber.i("found word: %s", trackName);
                         tracks.set(index, track);
                         runningTrackCount++;
-                        found = true;
                         checkAndHandleCompletion();
-                        break;
+                        return;
                     }
                 }
 
-                if (!found && offset <= 200) {
+                if (offset <= 200) {
                     // search next 50
                     searchTrack(curr, index, offset + 50);
+                } else {
+                    // could not find string
+                    EventBus.getDefault().post(new CreatePlaylistErrorEvent(curr));
                 }
 
             }
@@ -138,6 +136,7 @@ public class CreatePlaylistService extends IntentService {
                                 Timber.d("added tracks to playlist: %s", playlist.name);
                                 Timber.d("response: %s", response.getReason());
                                 EventBus.getDefault().post(new LoadPlaylistsEvent());
+                                EventBus.getDefault().post(new CreatePlaylistSuccessEvent(playlistName));
                             }
 
                             @Override
