@@ -1,4 +1,4 @@
-package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.createplaylist;
+package com.blogspot.spartandeveloper.playlistmessagesforspotify.data;
 
 import android.app.IntentService;
 import android.content.Intent;
