@@ -64,39 +64,41 @@ public class CreatePlaylistService extends IntentService {
         // loop over all tracks
         for (int i = 0; i < totalTracks; i++) {
             String curr = split[i];
-
-            // search all offsets - easy and FIXME wastes searches
-            for (int offset = 0; offset < 251; offset += 50) {
-                searchTrack(curr, i, offset);
-            }
-
+            searchTrack(curr, i, 0);
         }
     }
 
-    private void searchTrack(final String curr, final int i, final int offset) {
+    private void searchTrack(final String curr, final int index, final int offset) {
         Map<String, Object> options = new HashMap<>();
         options.put("limit", 50);
         options.put("offset", offset);
-        Timber.d("searchTracks. curr:%s, offset:%s, i:%s", curr, offset, i);
+        Timber.d("searchTracks. curr:%s, offset:%s, index:%s", curr, offset, index);
 
         spotify.searchTracks(curr, options, new Callback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {
 
-                if (tracks.get(i) != null) {
-                    Timber.d("already found track for index :%s", i);
+                if (tracks.get(index) != null) {
+                    Timber.e("SHOULD NOT REACH HERE. already found track for index :%s", index);
                     return;
                 }
 
+                boolean found = false;
                 for (Track track : tracksPager.tracks.items) {
                     String trackName = track.name;
                     if (trackName.equalsIgnoreCase(curr)) {
                         Timber.i("found word: %s", trackName);
-                        tracks.set(i, track);
+                        tracks.set(index, track);
                         runningTrackCount++;
+                        found = true;
                         checkAndHandleCompletion();
                         break;
                     }
+                }
+
+                if (!found && offset <= 200) {
+                    // search next 50
+                    searchTrack(curr, index, offset + 50);
                 }
 
             }
