@@ -1,11 +1,11 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.TestDataFactory;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainMvpView;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main.MainPresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxSchedulersOverrideRule;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +31,7 @@ public class MainPresenterTest {
 
     @Mock MainMvpView mMockMainMvpView;
     @Mock DataManager mMockDataManager;
-    @Mock AuthenticationResponse response;
+    @Mock PreferencesHelper preferencesHelper;
     private MainPresenter mMainPresenter;
 
     @Rule
@@ -39,7 +39,7 @@ public class MainPresenterTest {
 
     @Before
     public void setUp() {
-        mMainPresenter = new MainPresenter(mMockDataManager);
+        mMainPresenter = new MainPresenter(mMockDataManager, preferencesHelper);
         mMainPresenter.attachView(mMockMainMvpView);
     }
 
@@ -51,21 +51,22 @@ public class MainPresenterTest {
     @Test
     public void whenEmptyPlaylistInfo_thenShowPlaylistError() {
 
-        mMainPresenter.createPlaylist(null, null);
+        mMainPresenter.createPlaylist("", "");
 
         verify(mMockMainMvpView, never()).showPlaylists(null);
         verify(mMockMainMvpView, never()).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showError();
+        verify(mMockMainMvpView).showCreatePlaylistMessageError();
     }
 
     @Test
     public void loadPlaylistsReturnsPlaylists() {
         List<PlaylistSimple> playlists = TestDataFactory.makePlaylists(10);
 
-        when(mMockDataManager.getPlaylists(response.getAccessToken()))
+        when(mMockDataManager.getPlaylists())
                 .thenReturn(Observable.just(playlists));
 
-        mMainPresenter.loadPlaylists(response);
+        mMainPresenter.loadPlaylists();
         verify(mMockMainMvpView).showPlaylists(playlists);
         verify(mMockMainMvpView, never()).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showError();
@@ -73,10 +74,10 @@ public class MainPresenterTest {
 
     @Test
     public void loadPlaylistsReturnsEmptyList() {
-        when(mMockDataManager.getPlaylists(response.getAccessToken()))
+        when(mMockDataManager.getPlaylists())
                 .thenReturn(Observable.just(Collections.<PlaylistSimple>emptyList()));
 
-        mMainPresenter.loadPlaylists(response);
+        mMainPresenter.loadPlaylists();
         verify(mMockMainMvpView).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showPlaylists(ArgumentMatchers.<PlaylistSimple>anyList());
         verify(mMockMainMvpView, never()).showError();
@@ -84,35 +85,13 @@ public class MainPresenterTest {
 
     @Test
     public void loadPlaylistsFails() {
-        when(mMockDataManager.getPlaylists(response.getAccessToken()))
+        when(mMockDataManager.getPlaylists())
                 .thenReturn(Observable.<List<PlaylistSimple>>error(new RuntimeException()));
 
-        mMainPresenter.loadPlaylists(response);
+        mMainPresenter.loadPlaylists();
         verify(mMockMainMvpView).showError();
         verify(mMockMainMvpView, never()).showPlaylistsEmpty();
         verify(mMockMainMvpView, never()).showPlaylists(ArgumentMatchers.<PlaylistSimple>anyList());
     }
-
-//    @Test
-//    public void loadRibotsReturnsEmptyList() {
-//        when(mMockDataManager.getRibots())
-//                .thenReturn(Observable.just(Collections.<Ribot>emptyList()));
-//
-//        mMainPresenter.loadRibots();
-//        verify(mMockMainMvpView).showRibotsEmpty();
-//        verify(mMockMainMvpView, never()).showRibots(ArgumentMatchers.<Ribot>anyList());
-//        verify(mMockMainMvpView, never()).showError();
-//    }
-//
-//    @Test
-//    public void loadPlaylistsFails() {
-//        when(mMockDataManager.getRibots())
-//                .thenReturn(Observable.<List<Ribot>>error(new RuntimeException()));
-//
-//        mMainPresenter.loadRibots();
-//        verify(mMockMainMvpView).showError();
-//        verify(mMockMainMvpView, never()).showRibotsEmpty();
-//        verify(mMockMainMvpView, never()).showRibots(ArgumentMatchers.<Ribot>anyList());
-//    }
 
 }
