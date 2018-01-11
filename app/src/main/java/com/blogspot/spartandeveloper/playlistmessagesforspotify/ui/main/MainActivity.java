@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -15,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -72,18 +75,17 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
     @BindView(R.id.rv_playlists) RecyclerView mRecyclerView;
     @BindView(R.id.fab_create_playlist_dialog) ActionButton fab;
+    private TextInputEditText playlistNameEt;
 
     private MaterialDialog createPlaylistDialog;
-    private int expireTime;
 
     /**
      * Return an Intent to start this Activity.
-     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
+     * cruft: triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
      * only be set to false during testing.
      */
-    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+    public static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
         return intent;
     }
 
@@ -103,8 +105,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
 
+        createCreatePlaylistDialog();
         fab.setOnClickListener(getFabOnClickListener());
-
 
         long threeMinutesFromNow = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(3);
         Timber.d("should login Spotify: %S", prefs.getExpireTimeSeconds() < threeMinutesFromNow);
@@ -215,18 +217,29 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         return new OnClickListener() {
             @Override
             public void onClick(View v) {
-                createPlaylistDialog = new MaterialDialog.Builder(MainActivity.this)
-                        .title(getString(R.string.enter_pl_info))
-                        .theme(Theme.DARK)
-                        .customView(R.layout.dialog_create_playlist, false)
-                        .onPositive(getPositiveCallback())
-                        .onNegative(getNegativeCallback())
-                        .positiveText(android.R.string.ok)
-                        .negativeText(android.R.string.cancel)
-                        .autoDismiss(false)
-                        .show();
-            }
+                createPlaylistDialog.show();
+                new Handler().postDelayed(new Runnable() {
+
+                    public void run() {
+                        playlistNameEt.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
+                        playlistNameEt.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
+                    }
+                }, 200);            }
         };
+    }
+
+    private void createCreatePlaylistDialog() {
+        createPlaylistDialog = new MaterialDialog.Builder(MainActivity.this)
+                .title(getString(R.string.enter_pl_info))
+                .theme(Theme.DARK)
+                .customView(R.layout.dialog_create_playlist, false)
+                .onPositive(getPositiveCallback())
+                .onNegative(getNegativeCallback())
+                .positiveText(android.R.string.search_go)
+                .negativeText(android.R.string.cancel)
+                .autoDismiss(false)
+                .build();
+        playlistNameEt = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_name);
     }
 
     private SingleButtonCallback getNegativeCallback() {
