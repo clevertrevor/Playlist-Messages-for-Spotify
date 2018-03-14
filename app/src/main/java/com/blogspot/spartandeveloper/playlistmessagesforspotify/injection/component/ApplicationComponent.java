@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.SyncService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.DatabaseHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.remote.RibotsService;
@@ -19,8 +18,6 @@ import dagger.Component;
 @Singleton
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
-
-    void inject(SyncService syncService);
 
     @ApplicationContext
     Context context();
