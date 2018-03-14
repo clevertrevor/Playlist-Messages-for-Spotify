@@ -2,7 +2,6 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Name;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Profile;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Ribot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,18 +18,6 @@ public class TestDataFactory {
 
     public static String randomUuid() {
         return UUID.randomUUID().toString();
-    }
-
-    public static Ribot makeRibot(String uniqueSuffix) {
-        return Ribot.create(makeProfile(uniqueSuffix));
-    }
-
-    public static List<Ribot> makeListRibots(int number) {
-        List<Ribot> ribots = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            ribots.add(makeRibot(String.valueOf(i)));
-        }
-        return ribots;
     }
 
     public static Profile makeProfile(String uniqueSuffix) {
