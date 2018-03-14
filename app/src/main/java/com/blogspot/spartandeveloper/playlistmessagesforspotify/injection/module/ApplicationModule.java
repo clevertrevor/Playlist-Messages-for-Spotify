@@ -3,10 +3,7 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.modul
 import android.app.Application;
 import android.content.Context;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.remote.RibotsService;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ApplicationContext;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -31,12 +28,6 @@ public class ApplicationModule {
     @ApplicationContext
     Context provideContext() {
         return mApplication;
-    }
-
-    @Provides
-    @Singleton
-    RibotsService provideRibotsService() {
-        return RibotsService.Creator.newRibotsService();
     }
 
 }

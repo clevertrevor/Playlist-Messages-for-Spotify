@@ -3,13 +3,13 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common.inj
 import android.app.Application;
 import android.content.Context;
 
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ApplicationContext;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.DataManager;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.remote.RibotsService;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.ApplicationContext;
 
 import static org.mockito.Mockito.mock;
 
@@ -43,12 +43,6 @@ public class ApplicationTestModule {
     @Singleton
     DataManager provideDataManager() {
         return mock(DataManager.class);
-    }
-
-    @Provides
-    @Singleton
-    RibotsService provideRibotsService() {
-        return mock(RibotsService.class);
     }
 
 }
