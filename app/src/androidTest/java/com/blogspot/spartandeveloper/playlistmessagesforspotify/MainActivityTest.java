@@ -54,7 +54,7 @@ public class MainActivityTest {
                     // start a sync service in the background that would affect  the behaviour of
                     // this test.
                     return MainActivity.getStartIntent(
-                            InstrumentationRegistry.getTargetContext(), false);
+                            InstrumentationRegistry.getTargetContext());
                 }
             };
 

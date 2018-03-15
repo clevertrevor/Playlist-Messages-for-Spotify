@@ -2,9 +2,6 @@ package com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local;
 
 import android.support.annotation.VisibleForTesting;
 
-import com.squareup.sqlbrite2.BriteDatabase;
-import com.squareup.sqlbrite2.SqlBrite;
-
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -23,22 +20,14 @@ import retrofit.RestAdapter;
 @Singleton
 public class DatabaseHelper {
 
-    private final BriteDatabase mDb;
 
     @Inject
-    public DatabaseHelper(DbOpenHelper dbOpenHelper) {
-        this(dbOpenHelper, Schedulers.io());
+    public DatabaseHelper() {
+        this(Schedulers.io());
     }
 
     @VisibleForTesting
-    public DatabaseHelper(DbOpenHelper dbOpenHelper, Scheduler scheduler) {
-        SqlBrite.Builder briteBuilder = new SqlBrite.Builder();
-        mDb = briteBuilder.build().wrapDatabaseHelper(dbOpenHelper, scheduler);
-    }
-
-    public BriteDatabase getBriteDb() {
-        return mDb;
-    }
+    public DatabaseHelper(Scheduler scheduler) {}
 
     public Observable<List<PlaylistSimple>> getPlaylists(final String accessToken) {
 
