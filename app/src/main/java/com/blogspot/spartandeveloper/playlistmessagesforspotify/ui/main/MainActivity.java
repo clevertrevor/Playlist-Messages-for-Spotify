@@ -117,8 +117,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        LoginFragment loginFragment = LoginFragment.newInstance();
-        fragmentTransaction.add(R.id.fragment_container, loginFragment, LoginFragment.TAG);
+        LoginFragment loginFragment = LoginFragment.Companion.newInstance();
+        fragmentTransaction.add(R.id.fragment_container, loginFragment, LoginFragment.Companion.getTAG());
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, 0);
         fragmentTransaction.show(loginFragment);
         fragmentTransaction.commit();
@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     private void hideLoginFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginFragment.TAG);
+        LoginFragment loginFragment = (LoginFragment) fragmentManager.findFragmentByTag(LoginFragment.Companion.getTAG());
         fragmentTransaction.hide(loginFragment);
         fragmentTransaction.commit();
     }
