@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -121,5 +122,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
             getMvpView().showLoginFailed();
         }
 
+    }
+
+    public void handleLogin() {
+        long threeMinutesFromNow = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(3);
+        Timber.d("should login Spotify: %S", prefs.getExpireTimeSeconds() < threeMinutesFromNow);
+        if (prefs.getExpireTimeSeconds() < threeMinutesFromNow) {
+            getMvpView().showLoginFragment();
+        } else {
+            loadPlaylists();
+        }
     }
 }

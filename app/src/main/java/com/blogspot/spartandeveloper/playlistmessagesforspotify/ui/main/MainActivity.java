@@ -48,7 +48,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -108,22 +107,14 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         createCreatePlaylistDialog();
         fab.setOnClickListener(getFabOnClickListener());
 
-        long threeMinutesFromNow = (System.currentTimeMillis() / 1000) + TimeUnit.MINUTES.toSeconds(3);
-        Timber.d("should login Spotify: %S", prefs.getExpireTimeSeconds() < threeMinutesFromNow);
-        if (prefs.getExpireTimeSeconds() < threeMinutesFromNow) {
-            // user must login - open login fragment
-            Timber.d("user must login");
-            showLoginFragment();
-            fab.hide();
-
-        } else {
-            mMainPresenter.loadPlaylists();
-        }
+        mMainPresenter.handleLogin();
 
     }
 
     @Override
     public void showLoginFragment() {
+        fab.hide();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         LoginFragment loginFragment = LoginFragment.newInstance();
