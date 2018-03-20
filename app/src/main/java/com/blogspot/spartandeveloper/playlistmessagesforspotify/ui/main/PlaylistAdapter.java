@@ -1,5 +1,6 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistViewHolder> {
 
         holder.playlistNameTv.setText(item.name);
         holder.authorTv.setText(item.owner.display_name);
-        String trackStr = item.tracks.total + "  " + holder.itemView.getContext().getString(R.string.songs);
+        int count = item.tracks.total;
+        Resources res = holder.itemView.getContext().getResources();
+        String trackStr = count + " " + res.getQuantityString(R.plurals.songs, count);
         holder.trackTotalTv.setText(trackStr);
 
         if (item.images.size() >= 1) {
