@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -15,7 +14,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginFragment extends Fragment implements LoginMvpView {
+public class LoginFragment extends Fragment {
 
     public static final String TAG = "LoginFragment";
 
@@ -41,21 +40,6 @@ public class LoginFragment extends Fragment implements LoginMvpView {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, view);
         return view;
-    }
-
-    @Override
-    public void showSignInSuccessful() {
-
-    }
-
-    @Override
-    public void showSignInCancelled() {
-
-    }
-
-    @Override
-    public void showSignInFailure() {
-        Toast.makeText(getActivity(), getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btn_spotify_login)

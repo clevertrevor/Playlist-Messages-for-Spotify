@@ -24,4 +24,6 @@
     <string name="error_enter_a_playlist_name">Enter a playlist name</string>
     <string name="failed_to_find">Failed to find</string>
     <string name="successfully_created_playlist">Successfully created playlist</string>
+    <string name="logged_in">Logged In</string>
+    <string name="failed_to_login">Failed to login</string>
 </resources>

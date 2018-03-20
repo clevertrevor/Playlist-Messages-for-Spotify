@@ -6,6 +6,7 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.injection.Config
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.base.BasePresenter;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.RxUtil;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -100,4 +101,25 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
 
+    public void handleSpotifyCallback(AuthenticationResponse response) {
+
+        switch(response.getType()) {
+        case TOKEN:
+            Timber.i("successful Spotify login");
+            prefs.setSpotifyAccessToken(response.getAccessToken());
+            getMvpView().showLoginSuccessful(response.getAccessToken());
+            long expireTime = (System.currentTimeMillis() / 1000) + response.getExpiresIn();
+            prefs.setExpireTime(expireTime);
+            loadPlaylists();
+            break;
+        case ERROR:
+            Timber.i("failed Spotify login");
+            getMvpView().showLoginFailed();
+            break;
+        default:
+            Timber.i("user probably cancelled Spotify login");
+            getMvpView().showLoginFailed();
+        }
+
+    }
 }

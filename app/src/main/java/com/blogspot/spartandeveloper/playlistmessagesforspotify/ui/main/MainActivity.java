@@ -138,25 +138,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         super.onNewIntent(intent);
         Uri spotifyUri = intent.getData();
 
-        if(spotifyUri != null) {
+        if (spotifyUri != null) {
             AuthenticationResponse response = AuthenticationResponse.fromUri(spotifyUri);
-            switch(response.getType()) {
-            case TOKEN:
-                Timber.i("successful Spotify login");
-                ((MyApp) getApplicationContext()).initSpotifyService(response.getAccessToken());
-                fab.show();
-                setUserDetails();
-                prefs.setSpotifyAccessToken(response.getAccessToken());
-                setExpireTime(response.getExpiresIn());
-                mMainPresenter.loadPlaylists();
-                hideLoginFragment();
-                break;
-            case ERROR:
-                Timber.i("failed Spotify login");
-                break;
-            default:
-                Timber.i("user probably cancelled Spotify login");
-            }
+            mMainPresenter.handleSpotifyCallback(response);
         }
     }
 
@@ -326,6 +310,20 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     @Override
+    public void showLoginSuccessful(String accessToken) {
+        Toast.makeText(this, R.string.logged_in, Toast.LENGTH_SHORT).show();
+        fab.show();
+        setUserDetails();
+        ((MyApp) getApplicationContext()).initSpotifyService(accessToken);
+        hideLoginFragment();
+    }
+
+    @Override
+    public void showLoginFailed() {
+        Toast.makeText(this, R.string.failed_to_login, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void startCreatePlaylistService(String playlistName, String playlistMessage) {
         Timber.i("startCreatePlaylistService");
         Intent intent = new Intent(this, CreatePlaylistService.class);
@@ -348,11 +346,6 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         } else {
             Toast.makeText(this, getString(R.string.toast_spotify_not_installed), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void setExpireTime(int remainingSeconds) {
-        long expireTime = (System.currentTimeMillis() / 1000) + remainingSeconds;
-        prefs.setExpireTime(expireTime);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
