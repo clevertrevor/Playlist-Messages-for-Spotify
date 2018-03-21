@@ -1,8 +1,5 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.test.common;
 
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Name;
-import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.model.Profile;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,24 +13,24 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  */
 public class TestDataFactory {
 
-    public static String randomUuid() {
-        return UUID.randomUUID().toString();
-    }
-
-    public static Profile makeProfile(String uniqueSuffix) {
-        return Profile.builder()
-                .setName(makeName(uniqueSuffix))
-                .setEmail("email" + uniqueSuffix + "@ribot.com.uk")
-                .setDateOfBirth(new Date())
-                .setHexColor("#0066FF")
-                .setAvatar("http://api.ribot.io/images/" + uniqueSuffix)
-                .setBio(randomUuid())
-                .build();
-    }
-
-    public static Name makeName(String uniqueSuffix) {
-        return Name.create("Name-" + uniqueSuffix, "Surname-" + uniqueSuffix);
-    }
+//    public static String randomUuid() {
+//        return UUID.randomUUID().toString();
+//    }
+//
+//    public static Profile makeProfile(String uniqueSuffix) {
+//        return Profile.builder()
+//                .setName(makeName(uniqueSuffix))
+//                .setEmail("email" + uniqueSuffix + "@ribot.com.uk")
+//                .setDateOfBirth(new Date())
+//                .setHexColor("#0066FF")
+//                .setAvatar("http://api.ribot.io/images/" + uniqueSuffix)
+//                .setBio(randomUuid())
+//                .build();
+//    }
+//
+//    public static Name makeName(String uniqueSuffix) {
+//        return Name.create("Name-" + uniqueSuffix, "Surname-" + uniqueSuffix);
+//    }
 
     public static List<PlaylistSimple> makePlaylists(int i) {
         List<PlaylistSimple> list = new ArrayList<>();

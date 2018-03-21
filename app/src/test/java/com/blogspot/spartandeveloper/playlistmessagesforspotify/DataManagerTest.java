@@ -5,6 +5,7 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.Datab
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.local.PreferencesHelper;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -29,4 +30,10 @@ public class DataManagerTest {
         mDataManager = new DataManager(mMockPreferencesHelper,
                 mMockDatabaseHelper);
     }
+
+    @Test
+    public void dummyTest() {
+        assert(true);
+    }
+
 }
