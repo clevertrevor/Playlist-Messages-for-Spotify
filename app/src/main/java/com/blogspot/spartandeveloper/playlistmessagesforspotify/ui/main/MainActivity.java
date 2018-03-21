@@ -112,6 +112,15 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        final SpotifyService spotify = ((MyApp)getApplicationContext()).getSpotifyService();
+        if (spotify != null) {
+            setUserDetails();
+        }
+    }
+
+    @Override
     public void showLoginFragment() {
         fab.hide();
 
@@ -317,10 +326,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @Override
     public void startCreatePlaylistService(String playlistName, String playlistMessage) {
         Timber.i("startCreatePlaylistService");
-        Intent intent = new Intent(this, CreatePlaylistService.class);
-        intent.putExtra(CreatePlaylistService.PLAYLIST_NAME, playlistName);
-        intent.putExtra(CreatePlaylistService.PLAYLIST_MESSAGE, playlistMessage);
-        intent.putExtra(CreatePlaylistService.USER_ID, prefs.getSpotifyUserId());
+        Intent intent = CreatePlaylistService.newInstance(this, playlistName, playlistMessage,
+                prefs.getSpotifyUserId());
         startService(intent);
     }
 
