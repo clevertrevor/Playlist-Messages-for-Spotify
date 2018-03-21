@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: '../config/quality/quality.gradle'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'kotlin-android-extensions'
 //TODO uncomment line below after adding fabric api secret and key to fabric.properties
 //apply plugin: 'io.fabric'
 
