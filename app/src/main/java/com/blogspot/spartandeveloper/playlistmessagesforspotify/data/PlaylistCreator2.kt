@@ -1,0 +1,115 @@
+package com.blogspot.spartandeveloper.playlistmessagesforspotify.data
+
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistErrorEvent
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistSuccessEvent
+import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent
+import kaaes.spotify.webapi.android.SpotifyService
+import kaaes.spotify.webapi.android.models.Pager
+import kaaes.spotify.webapi.android.models.Track
+import kaaes.spotify.webapi.android.models.TracksPager
+import org.greenrobot.eventbus.EventBus
+import retrofit.Callback
+import retrofit.RetrofitError
+import retrofit.client.Response
+import timber.log.Timber
+import java.util.HashMap
+
+/**
+ * Search for playlist names by largest length.
+ */
+internal class PlaylistCreator2 constructor (val userId: String, val spotify: SpotifyService,
+                                             val playlistName: String, val message: String) {
+
+
+    init {
+
+
+    }
+
+    fun execute() {
+
+        val split = message.trim().split(" ")
+
+        val tmp = mutableListOf<Track>()
+        if (executeUtil(split, 0, tmp, 1) == false) {
+            // FIXME change err msg
+            EventBus.getDefault().post(CreatePlaylistErrorEvent(""))
+            // create pl using tmp
+        }
+
+        EventBus.getDefault().post(LoadPlaylistsEvent())
+        EventBus.getDefault().post(CreatePlaylistSuccessEvent(playlistName))
+
+    }
+
+    private fun executeUtil(words: List<String>, start: Int, tmp: MutableList<Track>, end: Int): Boolean {
+
+        // tmp contains a full playlist -- success
+        if (isTrackListInStringList(words, tmp))  {
+            return true
+        }
+
+        // failed to find a query
+        if (end > words.size) {
+            // backtrack
+            // TODO
+            return false
+        }
+
+
+        // create search query
+        val sb = StringBuilder()
+        for (i in start..end - 2) sb.append(words.get(i)).append(" ")
+        sb.append(words.get(end-1))
+        val query = sb.toString()
+        var foundTrack = false
+
+
+        val pager = spotify.searchTracks(query, getSpotifyOptions())
+
+        for (track in pager.tracks.items) {
+            val trackName = track.name
+            if (trackName.equals(query, ignoreCase = true)) {
+                Timber.i("found word: %s", trackName)
+                tmp.add(track)
+                foundTrack = true
+                break
+            }
+        }
+
+        // TODO impl paging
+
+        if (foundTrack) {
+            val newStart = end + 1
+            val newEnd = newStart + 1
+
+            return executeUtil(words, newStart, tmp, newEnd)
+        } else {
+            return executeUtil(words, start, tmp, end + 1)
+        }
+    }
+
+    // return true if the given track list's names are equivalent to the given String list
+    private fun isTrackListInStringList(p0: List<String>, p1: List<Track>): Boolean {
+
+        if (p0.size != p1.size) {
+            return false
+        }
+
+        val sb0 = StringBuilder()
+        val sb1 = StringBuilder()
+
+        for (str in p0) { sb0.append(str).append(" ") }
+        for (track in p1) { sb1.append(track.name).append(" ") }
+
+        return sb0.toString().equals(sb1.toString(), true)
+    }
+
+    private fun getSpotifyOptions(): MutableMap<String, Any>? {
+        val options = HashMap<String, Any>()
+        options["limit"] = 50
+        options["offset"] = 0
+        return options
+    }
+
+}

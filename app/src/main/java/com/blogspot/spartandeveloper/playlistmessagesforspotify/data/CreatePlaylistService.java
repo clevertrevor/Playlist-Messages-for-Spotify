@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -64,7 +65,8 @@ public class CreatePlaylistService extends IntentService {
         String userId = intent.getStringExtra(USER_ID);
         String message = intent.getStringExtra(PLAYLIST_MESSAGE);
 
-        PlaylistCreator pc = new PlaylistCreator(userId, spotify, playlistName, message);
+//        PlaylistCreator pc = new PlaylistCreator(userId, spotify, playlistName, message);
+        PlaylistCreator2 pc = new PlaylistCreator2(userId, spotify, playlistName, message);
         pc.execute();
 
     }
