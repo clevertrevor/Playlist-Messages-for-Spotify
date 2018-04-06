@@ -15,26 +15,25 @@ import java.util.*
 internal class PlaylistCreator2 constructor (val userId: String, val spotify: SpotifyService,
                                              val playlistName: String, val message: String) {
 
-    val MAX_SPOTIFY_OFFSET = 450
-    val INC_SPOTIFY_OFFSET = 50
+    private val MAX_SPOTIFY_OFFSET = 450
+    private val INC_SPOTIFY_OFFSET = 50
 
     fun execute() {
 
         val split = message.trim().split(" ")
 
-        val tmp = mutableListOf<String>()
-        val it = tmp.iterator()
+        val it = split.iterator()
         val userQuery = LinkedList<String>()
         while (it.hasNext()) userQuery.addLast(it.next())
         val result = LinkedList<Track>()
-        if (executeUtil(userQuery, result)) {
+
+        if (!executeUtil(userQuery, result)) {
             // FIXME change err msg
             EventBus.getDefault().post(CreatePlaylistErrorEvent(""))
-            // create pl using tmp
+        } else {
+            EventBus.getDefault().post(LoadPlaylistsEvent())
+            EventBus.getDefault().post(CreatePlaylistSuccessEvent(playlistName))
         }
-
-        EventBus.getDefault().post(LoadPlaylistsEvent())
-        EventBus.getDefault().post(CreatePlaylistSuccessEvent(playlistName))
 
     }
 
@@ -46,19 +45,28 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         }
 
         // iterate over all options
-        for (i in 0..userQuery.size) {
+        for (i in 0 until userQuery.size) {
 
             val str = userQuery[i] // will need to change to grab multiple words
 
             val foundTrack = search(str)
+
             if (foundTrack != null) {
-                result.add(0, foundTrack)
-                executeUtil(userQuery, result)
+
+                result.add(foundTrack)
+                userQuery.remove(str)
+
+                if (executeUtil(userQuery, result)) {
+                    // bubble up successful query
+                    return true
+                }
+
+                // backtrack -- not tested
                 result.remove(foundTrack)
+                userQuery.add(0, str)
             }
 
         }
-
 
         return false
     }
@@ -84,31 +92,12 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
             }
 
             offset += INC_SPOTIFY_OFFSET
+            options["offset"] = offset
 
         }
 
         return null
     }
 
-    // return true if the given track list's names are equivalent to the given String list
-    fun isTrackListInStringList(p0: List<String>, p1: List<Track>): Boolean {
-
-        if (p0.size != p1.size) {
-            return false
-        }
-
-        val sb0 = StringBuilder()
-        val sb1 = StringBuilder()
-
-        for (str in p0) {
-            sb0.append(str).append(" ")
-        }
-        for (track in p1) {
-            sb1.append(track.name).append(" ")
-        }
-
-        return sb0.toString().equals(sb1.toString(), true)
-    }
 
 }
-

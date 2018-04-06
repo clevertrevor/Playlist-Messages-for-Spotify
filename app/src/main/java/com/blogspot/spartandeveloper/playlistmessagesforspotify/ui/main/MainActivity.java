@@ -224,6 +224,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
                 .autoDismiss(false)
                 .build();
         playlistNameEt = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_name);
+        TextInputEditText playlistMessageDesc = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_message);
+        playlistNameEt.setText("I love you");
+        playlistMessageDesc.setText("I love you");
+
     }
 
     private SingleButtonCallback getNegativeCallback() {
