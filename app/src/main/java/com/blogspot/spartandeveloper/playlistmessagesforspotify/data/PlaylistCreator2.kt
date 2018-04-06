@@ -4,15 +4,10 @@ import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.Crea
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.CreatePlaylistSuccessEvent
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.util.events.LoadPlaylistsEvent
 import kaaes.spotify.webapi.android.SpotifyService
-import kaaes.spotify.webapi.android.models.Pager
 import kaaes.spotify.webapi.android.models.Track
-import kaaes.spotify.webapi.android.models.TracksPager
 import org.greenrobot.eventbus.EventBus
-import retrofit.Callback
-import retrofit.RetrofitError
-import retrofit.client.Response
 import timber.log.Timber
-import java.util.HashMap
+import java.util.*
 
 /**
  * Search for playlist names by largest length.
@@ -42,15 +37,15 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
     }
 
-    private fun executeUtil(words: List<String>, start: Int, tmp: MutableList<Track>, end: Int): Boolean {
+    private fun executeUtil(userQueryList: List<String>, start: Int, tmp: Stack<Track>, end: Int): Boolean {
 
         // tmp contains a full playlist -- success
-        if (isTrackListInStringList(words, tmp))  {
+        if (isTrackListInStringList(userQueryList, tmp))  {
             return true
         }
 
         // failed to find a query
-        if (end > words.size) {
+        if (end > userQueryList.size) {
             // backtrack
             // TODO
             return false
@@ -59,8 +54,8 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
         // create search query
         val sb = StringBuilder()
-        for (i in start..end - 2) sb.append(words.get(i)).append(" ")
-        sb.append(words.get(end-1))
+        for (i in start..end - 2) sb.append(userQueryList.get(i)).append(" ")
+        sb.append(userQueryList.get(end-1))
         val query = sb.toString()
         var foundTrack = false
 
@@ -92,9 +87,9 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
             val newStart = end + 1
             val newEnd = newStart + 1
 
-            return executeUtil(words, newStart, tmp, newEnd)
+            return executeUtil(userQueryList, newStart, tmp, newEnd)
         } else {
-            return executeUtil(words, start, tmp, end + 1)
+            return executeUtil(userQueryList, start, tmp, end + 1)
         }
     }
 
