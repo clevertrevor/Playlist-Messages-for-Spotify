@@ -15,18 +15,19 @@ import java.util.*
 internal class PlaylistCreator2 constructor (val userId: String, val spotify: SpotifyService,
                                              val playlistName: String, val message: String) {
 
-
-    init {
-
-
-    }
+    val MAX_SPOTIFY_OFFSET = 450
+    val INC_SPOTIFY_OFFSET = 50
 
     fun execute() {
 
         val split = message.trim().split(" ")
 
-        val tmp = mutableListOf<Track>()
-        if (executeUtil(split, 0, tmp, 1) == false) {
+        val tmp = mutableListOf<String>()
+        val it = tmp.iterator()
+        val userQuery = LinkedList<String>()
+        while (it.hasNext()) userQuery.addLast(it.next())
+        val result = LinkedList<Track>()
+        if (executeUtil(userQuery, result)) {
             // FIXME change err msg
             EventBus.getDefault().post(CreatePlaylistErrorEvent(""))
             // create pl using tmp
@@ -37,27 +38,32 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
     }
 
-    private fun executeUtil(userQueryList: List<String>, start: Int, tmp: Stack<Track>, end: Int): Boolean {
+    private fun executeUtil(userQuery: MutableList<String>, result: MutableList<Track>): Boolean {
 
-        // tmp contains a full playlist -- success
-        if (isTrackListInStringList(userQueryList, tmp))  {
+        // finished without any remaining words
+        if (userQuery.isEmpty()) {
             return true
         }
 
-        // failed to find a query
-        if (end > userQueryList.size) {
-            // backtrack
-            // TODO
-            return false
+        // iterate over all options
+        for (i in 0..userQuery.size) {
+
+            val str = userQuery[i] // will need to change to grab multiple words
+
+            val foundTrack = search(str)
+            if (foundTrack != null) {
+                result.add(0, foundTrack)
+                executeUtil(userQuery, result)
+                result.remove(foundTrack)
+            }
+
         }
 
 
-        // create search query
-        val sb = StringBuilder()
-        for (i in start..end - 2) sb.append(userQueryList.get(i)).append(" ")
-        sb.append(userQueryList.get(end-1))
-        val query = sb.toString()
-        var foundTrack = false
+        return false
+    }
+
+    private fun search(query: String): Track? {
 
         var offset = 0
         val options = HashMap<String, Any>()
@@ -65,7 +71,7 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         options["offset"] = offset
 
         // paginated search until found query or max offset
-        while (offset <= 450 && !foundTrack) { // max offset is 450
+        while (offset <= MAX_SPOTIFY_OFFSET) {
 
             val pager = spotify.searchTracks(query, options)
 
@@ -73,28 +79,19 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
                 val trackName = track.name
                 if (trackName.equals(query, ignoreCase = true)) {
                     Timber.i("found word: %s", trackName)
-                    tmp.add(track)
-                    foundTrack = true
-                    break
+                    return track
                 }
             }
 
-            offset += 50
+            offset += INC_SPOTIFY_OFFSET
+
         }
 
-
-        if (foundTrack) {
-            val newStart = end + 1
-            val newEnd = newStart + 1
-
-            return executeUtil(userQueryList, newStart, tmp, newEnd)
-        } else {
-            return executeUtil(userQueryList, start, tmp, end + 1)
-        }
+        return null
     }
 
     // return true if the given track list's names are equivalent to the given String list
-    private fun isTrackListInStringList(p0: List<String>, p1: List<Track>): Boolean {
+    fun isTrackListInStringList(p0: List<String>, p1: List<Track>): Boolean {
 
         if (p0.size != p1.size) {
             return false
@@ -103,10 +100,15 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         val sb0 = StringBuilder()
         val sb1 = StringBuilder()
 
-        for (str in p0) { sb0.append(str).append(" ") }
-        for (track in p1) { sb1.append(track.name).append(" ") }
+        for (str in p0) {
+            sb0.append(str).append(" ")
+        }
+        for (track in p1) {
+            sb1.append(track.name).append(" ")
+        }
 
         return sb0.toString().equals(sb1.toString(), true)
     }
 
 }
+
