@@ -64,20 +64,29 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         val query = sb.toString()
         var foundTrack = false
 
+        var offset = 0
+        val options = HashMap<String, Any>()
+        options["limit"] = 50
+        options["offset"] = offset
 
-        val pager = spotify.searchTracks(query, getSpotifyOptions())
+        // paginated search until found query or max offset
+        while (offset <= 450 && !foundTrack) { // max offset is 450
 
-        for (track in pager.tracks.items) {
-            val trackName = track.name
-            if (trackName.equals(query, ignoreCase = true)) {
-                Timber.i("found word: %s", trackName)
-                tmp.add(track)
-                foundTrack = true
-                break
+            val pager = spotify.searchTracks(query, options)
+
+            for (track in pager.tracks.items) {
+                val trackName = track.name
+                if (trackName.equals(query, ignoreCase = true)) {
+                    Timber.i("found word: %s", trackName)
+                    tmp.add(track)
+                    foundTrack = true
+                    break
+                }
             }
+
+            offset += 50
         }
 
-        // TODO impl paging
 
         if (foundTrack) {
             val newStart = end + 1
@@ -103,13 +112,6 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         for (track in p1) { sb1.append(track.name).append(" ") }
 
         return sb0.toString().equals(sb1.toString(), true)
-    }
-
-    private fun getSpotifyOptions(): MutableMap<String, Any>? {
-        val options = HashMap<String, Any>()
-        options["limit"] = 50
-        options["offset"] = 0
-        return options
     }
 
 }
