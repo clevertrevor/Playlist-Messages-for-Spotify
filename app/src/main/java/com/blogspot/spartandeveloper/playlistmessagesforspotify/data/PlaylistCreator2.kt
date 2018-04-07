@@ -18,7 +18,7 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
     private val MAX_SPOTIFY_OFFSET = 450
     private val INC_SPOTIFY_OFFSET = 50
 
-    fun execute() {
+    fun execute(): Boolean {
 
         val split = message.trim().split(" ")
 
@@ -30,9 +30,11 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         if (!executeUtil(userQuery, result)) {
             // FIXME change err msg
             EventBus.getDefault().post(CreatePlaylistErrorEvent(""))
+            return false
         } else {
             EventBus.getDefault().post(LoadPlaylistsEvent())
             EventBus.getDefault().post(CreatePlaylistSuccessEvent(playlistName))
+            return true
         }
 
     }
@@ -47,23 +49,35 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         // iterate over all options
         for (i in 0 until userQuery.size) {
 
-            val str = userQuery[i] // will need to change to grab multiple words
+            val searchList = userQuery.subList(0, i + 1)
+            val sb = StringBuilder()
+            for (s: String in searchList) {
+                sb.append(s).append(" ")
+            }
 
-            val foundTrack = search(str)
+            val subQuery = sb.toString().trim() // need to change to grab multiple words
+
+            val foundTrack = search(subQuery)
 
             if (foundTrack != null) {
 
+                // track successes
                 result.add(foundTrack)
-                userQuery.remove(str)
+                for (s: String in searchList) {
+                    userQuery.remove(s)
+                }
 
+
+                // bubble up successful query
                 if (executeUtil(userQuery, result)) {
-                    // bubble up successful query
                     return true
                 }
 
-                // backtrack -- not tested
+                // backtrack for failure
                 result.remove(foundTrack)
-                userQuery.add(0, str)
+                for (s: String in searchList) {
+                    userQuery.add(0, subQuery)
+                }
             }
 
         }
