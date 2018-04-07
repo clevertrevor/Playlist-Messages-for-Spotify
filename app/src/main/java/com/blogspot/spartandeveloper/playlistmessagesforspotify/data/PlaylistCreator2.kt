@@ -27,7 +27,7 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
         while (it.hasNext()) userQuery.addLast(it.next())
         val result = LinkedList<Track>()
 
-        if (!executeUtil(userQuery, result)) {
+        if (!executeUtil(userQuery = userQuery, result = result)) {
             // FIXME change err msg
             EventBus.getDefault().post(CreatePlaylistErrorEvent(""))
             return false
@@ -39,17 +39,17 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
     }
 
-    private fun executeUtil(userQuery: MutableList<String>, result: MutableList<Track>): Boolean {
+    private fun executeUtil(userQuery: MutableList<String>, startIndex: Int = 0, result: MutableList<Track>): Boolean {
 
-        // finished without any remaining words
-        if (userQuery.isEmpty()) {
+        // finished; no any remaining words
+        if (startIndex == userQuery.size) {
             return true
         }
 
         // iterate over all options
-        for (i in 0 until userQuery.size) {
+        for (i in startIndex until userQuery.size) {
 
-            val searchList = userQuery.subList(0, i + 1)
+            val searchList = userQuery.subList(startIndex, i + 1)
             val sb = StringBuilder()
             for (s: String in searchList) {
                 sb.append(s).append(" ")
@@ -63,21 +63,15 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
                 // track successes
                 result.add(foundTrack)
-                for (s: String in searchList) {
-                    userQuery.remove(s)
-                }
 
 
                 // bubble up successful query
-                if (executeUtil(userQuery, result)) {
+                if (executeUtil(userQuery, i + 1 , result)) {
                     return true
                 }
 
                 // backtrack for failure
                 result.remove(foundTrack)
-                for (s: String in searchList) {
-                    userQuery.add(0, subQuery)
-                }
             }
 
         }
