@@ -1,32 +1,27 @@
 package com.blogspot.spartandeveloper.playlistmessagesforspotify.ui.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.Builder;
-import com.afollestad.materialdialogs.MaterialDialog.SingleButtonCallback;
-import com.afollestad.materialdialogs.Theme;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.MyApp;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.R;
 import com.blogspot.spartandeveloper.playlistmessagesforspotify.data.CreatePlaylistService;
@@ -76,7 +71,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @BindView(R.id.fab_create_playlist_dialog) ActionButton fab;
     private TextInputEditText playlistNameEt;
 
-    private MaterialDialog createPlaylistDialog;
+    private android.support.v7.app.AlertDialog createPlaylistDialog;
 
     /**
      * Return an Intent to start this Activity.
@@ -201,57 +196,52 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
         return new OnClickListener() {
             @Override
             public void onClick(View v) {
-                createPlaylistDialog.show();
-                new Handler().postDelayed(new Runnable() {
 
-                    public void run() {
-                        playlistNameEt.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
-                        playlistNameEt.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
-                    }
-                }, 200);            }
-        };
+
+                createPlaylistDialog.show();
+
+                playlistNameEt = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_name);
+                TextInputEditText playlistMessageDesc = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_message);
+                playlistNameEt.setText("I love you");
+                playlistMessageDesc.setText("I love you");
+        }};
     }
 
     private void createCreatePlaylistDialog() {
-        createPlaylistDialog = new MaterialDialog.Builder(MainActivity.this)
-                .title(getString(R.string.enter_pl_info))
-                .theme(Theme.DARK)
-                .customView(R.layout.dialog_create_playlist, false)
-                .onPositive(getPositiveCallback())
-                .onNegative(getNegativeCallback())
-                .positiveText(android.R.string.search_go)
-                .negativeText(android.R.string.cancel)
-                .autoDismiss(false)
-                .build();
-        playlistNameEt = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_name);
-        TextInputEditText playlistMessageDesc = (TextInputEditText) createPlaylistDialog.findViewById(R.id.et_playlist_message);
-        playlistNameEt.setText("I love you");
-        playlistMessageDesc.setText("I love you");
 
-    }
+        View layout = getLayoutInflater().inflate(R.layout.dialog_create_playlist, null);
 
-    private SingleButtonCallback getNegativeCallback() {
-        return new SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                dialog.dismiss();
-            }
-        };
-    }
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog)
+                .setTitle(getString(R.string.enter_pl_info))
+                .setView(layout)
+                .setPositiveButton(getString(android.R.string.search_go), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TextInputEditText playlistNameEt = ButterKnife.findById(
+                                MainActivity.this.createPlaylistDialog, R.id.et_playlist_name);
+                        TextInputEditText playlistMessageEt = ButterKnife.findById(
+                                MainActivity.this.createPlaylistDialog, R.id.et_playlist_message);
 
-    private SingleButtonCallback getPositiveCallback() {
-        return new SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                TextInputEditText playlistNameEt = ButterKnife.findById(dialog, R.id.et_playlist_name);
-                TextInputEditText playlistMessageEt = ButterKnife.findById(dialog, R.id.et_playlist_message);
+                        String name = playlistNameEt.getText().toString();
+                        String message = playlistMessageEt.getText().toString();
 
-                String name = playlistNameEt.getText().toString();
-                String message = playlistMessageEt.getText().toString();
+                        mMainPresenter.createPlaylist(name, message);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // placeholder to show 'cancel' button
+                    }
+                });
 
-                mMainPresenter.createPlaylist(name, message);
-            }
-        };
+
+        createPlaylistDialog = builder.create();
+
+        // remove empty space at top
+        AppCompatTextView uselessTitleToHide = (AppCompatTextView) createPlaylistDialog.findViewById(android.R.id.title);
+        if (uselessTitleToHide != null) uselessTitleToHide.setVisibility(View.GONE);
+
     }
 
     @Override
