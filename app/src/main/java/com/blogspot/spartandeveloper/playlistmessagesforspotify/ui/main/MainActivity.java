@@ -320,8 +320,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, OnPlaylis
     @Override
     public void startCreatePlaylistService(String playlistName, String playlistMessage) {
         Timber.i("startCreatePlaylistService");
-        Intent intent = CreatePlaylistService.newInstance(this, playlistName, playlistMessage,
-                prefs.getSpotifyUserId());
+        Intent intent = CreatePlaylistService.newInstance(this, playlistName, playlistMessage);
         startService(intent);
     }
 

@@ -9,11 +9,7 @@ import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
 import java.util.*
 
-/**
- * Search for playlist names by largest length.
- */
-internal class PlaylistCreator2 constructor (val userId: String, val spotify: SpotifyService,
-                                             val playlistName: String, val message: String) {
+internal class PlaylistCreator (val spotify: SpotifyService, val playlistName: String, val message: String) {
 
     private val MAX_SPOTIFY_OFFSET = 450
     private val INC_SPOTIFY_OFFSET = 50
@@ -46,16 +42,15 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
             return true
         }
 
-        // iterate over all options
         for (i in startIndex until userQuery.size) {
 
+            // create query for search range
             val searchList = userQuery.subList(startIndex, i + 1)
             val sb = StringBuilder()
             for (s: String in searchList) {
                 sb.append(s).append(" ")
             }
-
-            val subQuery = sb.toString().trim() // need to change to grab multiple words
+            val subQuery = sb.toString().trim()
 
             val foundTrack = search(subQuery)
 
@@ -63,7 +58,6 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
                 // track successes
                 result.add(foundTrack)
-
 
                 // bubble up successful query
                 if (executeUtil(userQuery, i + 1 , result)) {
@@ -73,7 +67,6 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
                 // backtrack for failure
                 result.remove(foundTrack)
             }
-
         }
 
         return false
@@ -106,6 +99,5 @@ internal class PlaylistCreator2 constructor (val userId: String, val spotify: Sp
 
         return null
     }
-
 
 }
